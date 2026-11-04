@@ -1,4 +1,4 @@
-import { PrismaClient, AgencyType } from '@prisma/client';
+import { PrismaClient, AgencyType, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -334,7 +334,7 @@ async function main() {
         agencyType: template.agencyType,
         version: template.version,
         isActive: template.isActive,
-        configurationData: template.configurationData,
+        configurationData: template.configurationData as Prisma.InputJsonValue,
       },
       create: {
         id: template.id,
@@ -344,7 +344,7 @@ async function main() {
         agencyType: template.agencyType,
         version: template.version,
         isActive: template.isActive,
-        configurationData: template.configurationData,
+        configurationData: template.configurationData as Prisma.InputJsonValue,
       },
     });
   }
