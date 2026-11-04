@@ -318,7 +318,7 @@ export class SmartOnboardingService {
         });
       }
 
-      if (t.agencyType === ('DIGITAL_MARKETING' as any) || t.category.includes('MARKETING')) {
+      if (t.agencyType === ('DIGITAL_MARKETING' as any) || t.category?.includes('MARKETING')) {
         marketingWorkflows.push({
           name: `${t.name} Campaign Automation`,
           details: config.pipeline?.stages || [],
