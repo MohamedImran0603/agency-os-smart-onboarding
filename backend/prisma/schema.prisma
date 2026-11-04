@@ -1,0 +1,28 @@
+// ─── Prisma Schema ─────────────────────────────────────────────────────────────
+// Phase 1: Infrastructure only — models will be added in Phase 2
+// when the data requirements are fully specified.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Models will be added below in Phase 2.
+// ─────────────────────────────────────────────────────────────────────────────
+//
+// Example (Phase 2 placeholder — do NOT uncomment yet):
+//
+// model Agency {
+//   id          String   @id @default(cuid())
+//   name        String
+//   type        AgencyType
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
+//
+//   onboardingSessions OnboardingSession[]
+// }

@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS custom properties ──────────────────────────────────────────────────── */
+:root {
+  --radius: 0.75rem;
+  --transition-base: 150ms ease;
+  --transition-smooth: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Base resets ────────────────────────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface text-white antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Consistent focus ring */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-surface;
+  }
+}
+
+/* ─── Reusable component layer ───────────────────────────────────────────────── */
+@layer components {
+  /* Glassmorphism card */
+  .glass-card {
+    @apply relative rounded-xl border border-surface-border bg-surface-card/70
+           backdrop-blur-md shadow-lg;
+  }
+
+  /* Gradient text utility */
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-400 via-accent-purple to-accent-cyan
+           bg-clip-text text-transparent;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5
+           bg-brand-500 text-white font-medium text-sm
+           hover:bg-brand-600 active:scale-95
+           transition-all duration-150
+           focus-visible:ring-2 focus-visible:ring-brand-400;
+  }
+
+  /* Secondary / ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5
+           border border-surface-border text-white/80 text-sm font-medium
+           hover:bg-surface-muted hover:text-white
+           transition-all duration-150;
+  }
+
+  /* Form input */
+  .input-field {
+    @apply w-full rounded-lg border border-surface-border bg-surface-muted
+           px-4 py-2.5 text-sm text-white placeholder:text-white/40
+           focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500
+           transition-colors duration-150;
+  }
+}
+
+/* ─── Utility overrides ──────────────────────────────────────────────────────── */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
