@@ -8,6 +8,6 @@ import { redirect } from 'next/navigation';
  * Root route — performs a server-side redirect.
  * Replace the target with the dashboard route once auth is wired.
  */
-export default function RootPage(): never {
+export default function RootPage() {
   redirect('/smart-onboarding');
 }

@@ -207,3 +207,4 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
     </div>
   );
 };
+

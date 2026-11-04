@@ -83,3 +83,4 @@ export async function activateOnboarding(): Promise<ActivationResponse> {
 export async function getTemplates(): Promise<WorkspaceTemplate[]> {
   return request<WorkspaceTemplate[]>('/templates');
 }
+

@@ -63,3 +63,4 @@ describe('SmartOnboardingController', () => {
     expect(service.activate).toHaveBeenCalledWith(mockAgencyId);
   });
 });
+

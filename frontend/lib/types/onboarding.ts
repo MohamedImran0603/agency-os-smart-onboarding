@@ -110,3 +110,4 @@ export interface ApiResponse<T> {
   code?: string;
   details?: Record<string, any>;
 }
+

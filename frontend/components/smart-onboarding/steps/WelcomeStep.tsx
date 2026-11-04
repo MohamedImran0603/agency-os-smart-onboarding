@@ -68,3 +68,4 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
     </Card>
   );
 };
+

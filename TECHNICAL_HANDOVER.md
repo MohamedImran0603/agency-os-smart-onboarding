@@ -127,3 +127,4 @@ When integrating this module into the primary Agency OS monorepo:
 | `class-validator` & `class-transformer` | DTO validation and implicit type conversion |
 | `@nestjs/swagger` | OpenAPI documentation generation |
 | `tailwindcss` | Agency OS tokenized styling |
+
