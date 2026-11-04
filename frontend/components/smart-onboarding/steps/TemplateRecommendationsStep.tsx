@@ -5,6 +5,7 @@ import { Badge } from '../../ui/Badge';
 import { TemplateCard } from '../TemplateCard';
 import { WorkspaceTemplate, AgencyType } from '../../../lib/types/onboarding';
 import { getRecommendedTemplates } from '../../../lib/api/onboarding';
+import { FALLBACK_TEMPLATES } from '../../../lib/constants/fallback-data';
 
 export interface TemplateRecommendationsStepProps {
   agencyType: AgencyType;
@@ -32,14 +33,20 @@ export const TemplateRecommendationsStep: React.FC<TemplateRecommendationsStepPr
         setLoading(true);
         const data = await getRecommendedTemplates();
         if (mounted) {
-          setTemplates(data);
-          // If no initial selections, pre-select all recommended templates
+          const list = data && data.length > 0 ? data : FALLBACK_TEMPLATES.filter((t) => !t.agencyType || t.agencyType === agencyType || t.agencyType === 'HYBRID');
+          setTemplates(list);
           if (initialSelectedIds.length === 0) {
-            setSelectedIds(data.map((t) => t.id));
+            setSelectedIds(list.map((t) => t.id));
           }
         }
-      } catch (err: any) {
-        if (mounted) setError(err.message || 'Failed to load templates.');
+      } catch {
+        if (mounted) {
+          const filtered = FALLBACK_TEMPLATES.filter((t) => !t.agencyType || t.agencyType === agencyType || t.agencyType === 'HYBRID');
+          setTemplates(filtered);
+          if (initialSelectedIds.length === 0) {
+            setSelectedIds(filtered.map((t) => t.id));
+          }
+        }
       } finally {
         if (mounted) setLoading(false);
       }

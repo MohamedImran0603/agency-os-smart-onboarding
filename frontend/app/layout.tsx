@@ -24,8 +24,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} dark`}>
-      <body className="min-h-screen bg-surface text-white antialiased">
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-screen bg-background text-textPrimary antialiased font-sans">
         {children}
       </body>
     </html>

@@ -17,7 +17,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
   return (
     <Card className="max-w-2xl mx-auto text-center p-8 md:p-12 space-y-6">
       <div className="inline-flex p-3 rounded-2xl bg-blue-50 text-primary border border-blue-100">
-        <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-10 h-10" width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"

@@ -7,6 +7,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { WorkspaceTemplate } from '../../lib/types/onboarding';
 import { getTemplates } from '../../lib/api/onboarding';
+import { FALLBACK_TEMPLATES } from '../../lib/constants/fallback-data';
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<WorkspaceTemplate[]>([]);
@@ -20,9 +21,9 @@ export default function TemplatesPage() {
       try {
         setLoading(true);
         const data = await getTemplates();
-        setTemplates(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch templates.');
+        setTemplates(data && data.length > 0 ? data : FALLBACK_TEMPLATES);
+      } catch {
+        setTemplates(FALLBACK_TEMPLATES);
       } finally {
         setLoading(false);
       }

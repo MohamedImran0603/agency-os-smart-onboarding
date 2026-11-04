@@ -15,11 +15,10 @@
   }
 
   body {
-    @apply bg-background text-textPrimary antialiased font-sans;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-
-  :focus-visible {
-    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-white;
+    background-color: #F8FAFC;
+    color: #0F172A;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

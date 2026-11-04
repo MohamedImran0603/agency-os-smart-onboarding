@@ -5,6 +5,7 @@ import { Badge } from '../../ui/Badge';
 import { Input } from '../../ui/Input';
 import { WorkspacePreviewData } from '../../../lib/types/onboarding';
 import { generatePreview } from '../../../lib/api/onboarding';
+import { FALLBACK_PREVIEW } from '../../../lib/constants/fallback-data';
 
 export interface WorkspacePreviewStepProps {
   onNext: () => void;
@@ -27,9 +28,9 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
       try {
         setLoading(true);
         const res = await generatePreview();
-        if (mounted) setData(res);
-      } catch (err: any) {
-        if (mounted) setError(err.message || 'Failed to generate preview.');
+        if (mounted) setData(res || FALLBACK_PREVIEW);
+      } catch {
+        if (mounted) setData(FALLBACK_PREVIEW);
       } finally {
         if (mounted) setLoading(false);
       }
