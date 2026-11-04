@@ -201,7 +201,7 @@ cd backend && npm run test:e2e
 | Phase | Title                                 | Status      |
 |-------|---------------------------------------|-------------|
 | 1     | Project Scaffolding & Repo Setup      | ✅ Complete |
-| 2     | Data Models, DTOs & Core API          | 🔜 Planned  |
+| 2     | Data Models, DTOs & Core API          | ✅ Complete |
 | 3     | Onboarding Wizard UI                  | 🔜 Planned  |
 | 4     | Auth (JWT + RBAC)                     | 🔜 Planned  |
 | 5     | Testing (Unit + Integration)          | 🔜 Planned  |

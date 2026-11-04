@@ -36,119 +36,120 @@ Errors return:
 
 ## Authentication
 
-> Implemented in **Phase 3**. Endpoints below marked 🔒 require a valid JWT
+> Implemented in **Phase 4**. Endpoints below marked 🔒 require a valid JWT
 > passed as `Authorization: Bearer <token>`.
+
+---
+
+## Canonical Data Entities (Phase 2)
+
+All entities conform strictly to Section 6 of the Task Spec & Common Standard:
+* **`Agency`**: Canonical shared tenant root.
+* **`AgencyOnboarding`**: Tracks agency profile, type, wizard step, and activation timestamp.
+* **`AgencyServiceSelection`**: Selected agency services during wizard steps.
+* **`WorkspaceTemplate`**: Seeded templates with rich JSON pipeline and task configurations.
+* **`AgencyTemplateSelection`**: Join table of templates chosen by the onboarding agency.
+* **`GeneratedWorkspaceConfig`**: Resulting pipeline, project, and task configurations provisioned on confirmation.
 
 ---
 
 ## Endpoints
 
-> **Phase 1 Note**: No endpoints are implemented yet.  
-> This document is a living specification. Endpoints will be added as each
-> phase is completed.
-
----
-
-### Smart Onboarding
-
-#### `POST /smart-onboarding/sessions`
-> Phase 2 — Create a new onboarding session
-
-**Request Body:**
-```json
-{
-  "agencyName": "string",
-  "agencyType": "CREATIVE | DIGITAL_MARKETING | WEB_DEVELOPMENT | PR | CONSULTING | FULL_SERVICE | OTHER"
-}
-```
-
-**Response `201`:**
-```json
-{
-  "id": "clxyz...",
-  "agencyId": "clxyz...",
-  "currentStep": "AGENCY_PROFILE",
-  "completedAt": null,
-  "createdAt": "2026-01-01T00:00:00.000Z",
-  "updatedAt": "2026-01-01T00:00:00.000Z"
-}
-```
-
----
-
-#### `GET /smart-onboarding/sessions/:id`
-> Phase 2 — Retrieve an onboarding session by ID 🔒
-
-**Path Parameters:**
-
-| Parameter | Type   | Description          |
-|-----------|--------|----------------------|
-| `id`      | string | Onboarding session ID|
-
-**Response `200`:**
-```json
-{
-  "id": "clxyz...",
-  "agencyId": "clxyz...",
-  "currentStep": "TEMPLATE_SELECTION",
-  "completedAt": null,
-  "createdAt": "2026-01-01T00:00:00.000Z",
-  "updatedAt": "2026-01-01T00:00:00.000Z"
-}
-```
-
----
-
-#### `PATCH /smart-onboarding/sessions/:id/step`
-> Phase 2 — Advance the wizard to the next step 🔒
-
-**Request Body:**
-```json
-{
-  "step": "TEAM_SIZE | TEMPLATE_SELECTION | REVIEW | COMPLETE",
-  "payload": { ... }
-}
-```
-
----
+### 1. Templates
 
 #### `GET /smart-onboarding/templates`
-> Phase 2 — List available workspace templates
+List available workspace templates filtered by agency type.
 
 **Query Parameters:**
 
-| Parameter    | Type   | Description                             |
-|--------------|--------|-----------------------------------------|
-| `agencyType` | string | Filter templates by agency type (optional)|
+| Parameter    | Type   | Description |
+|--------------|--------|-------------|
+| `agencyType` | string | Filter by `SOFTWARE_DEVELOPMENT`, `DIGITAL_MARKETING`, or `HYBRID` (optional) |
 
 **Response `200`:**
 ```json
 [
   {
-    "id": "clxyz...",
-    "name": "Creative Agency Starter",
-    "description": "Pipelines and checklists optimised for creative studios.",
-    "agencyTypes": ["CREATIVE", "FULL_SERVICE"],
-    "pipelineCount": 3,
-    "projectStructureCount": 5,
-    "taskChecklistCount": 12
+    "id": "t0000000-0000-0000-0000-000000000001",
+    "name": "Web Application Development",
+    "description": "Full-lifecycle web engineering workspace with agile sprints, code review gates, and CI/CD checklists.",
+    "category": "SOFTWARE_ENGINEERING",
+    "agencyType": "SOFTWARE_DEVELOPMENT",
+    "version": 1,
+    "isActive": true,
+    "configurationData": {
+      "pipeline": {
+        "name": "Web Application Lifecycle",
+        "stages": [ ... ]
+      },
+      "taskChecklists": [ ... ]
+    }
   }
 ]
 ```
 
 ---
 
-#### `POST /smart-onboarding/sessions/:id/confirm`
-> Phase 2 — Confirm template selection and generate workspace 🔒
+### 2. Agency Onboarding Session
 
-Triggers the workspace auto-generation job and marks the session as `COMPLETE`.
+#### `POST /smart-onboarding/sessions`
+Initialize or retrieve an onboarding profile for an agency.
+
+**Request Body:**
+```json
+{
+  "agencyId": "a0000000-0000-0000-0000-000000000001",
+  "agencyName": "Acme Innovations",
+  "agencyType": "SOFTWARE_DEVELOPMENT"
+}
+```
 
 **Response `201`:**
 ```json
 {
-  "workspaceId": "clxyz...",
+  "id": "b1111111-1111-1111-1111-111111111111",
+  "agencyId": "a0000000-0000-0000-0000-000000000001",
+  "agencyName": "Acme Innovations",
+  "agencyType": "SOFTWARE_DEVELOPMENT",
+  "status": "IN_PROGRESS",
+  "currentStep": 1,
+  "activatedAt": null,
+  "createdAt": "2026-11-04T10:00:00.000Z",
+  "updatedAt": "2026-11-04T10:00:00.000Z"
+}
+```
+
+---
+
+#### `GET /smart-onboarding/sessions/:agencyId`
+Retrieve current onboarding progress and state for an agency 🔒.
+
+**Response `200`:**
+```json
+{
+  "id": "b1111111-1111-1111-1111-111111111111",
+  "agencyId": "a0000000-0000-0000-0000-000000000001",
+  "agencyName": "Acme Innovations",
+  "agencyType": "SOFTWARE_DEVELOPMENT",
+  "status": "IN_PROGRESS",
+  "currentStep": 2,
+  "serviceSelections": [ ... ],
+  "templateSelections": [ ... ]
+}
+```
+
+---
+
+#### `POST /smart-onboarding/sessions/:agencyId/confirm`
+Confirm template selection and auto-generate workspace configurations 🔒.
+
+**Response `201`:**
+```json
+{
   "message": "Workspace generated successfully.",
-  "redirectUrl": "/dashboard"
+  "status": "COMPLETED",
+  "activatedAt": "2026-11-04T10:15:00.000Z",
+  "configsCount": 4
 }
 ```
 
@@ -162,7 +163,7 @@ Triggers the workspace auto-generation job and marks the session as `COMPLETE`.
 | `401`       | Unauthorised — missing or invalid JWT             |
 | `403`       | Forbidden — insufficient RBAC role                |
 | `404`       | Not Found — resource does not exist               |
-| `409`       | Conflict — e.g. duplicate session for same agency |
+| `409`       | Conflict — duplicate record                       |
 | `422`       | Unprocessable Entity — business rule violation    |
 | `500`       | Internal Server Error                             |
 
@@ -170,6 +171,7 @@ Triggers the workspace auto-generation job and marks the session as `COMPLETE`.
 
 ## Changelog
 
-| Version | Phase | Date       | Description                 |
-|---------|-------|------------|-----------------------------|
-| 0.1.0   | 1     | 2026-11-02 | Initial scaffold & documentation |
+| Version | Phase | Date       | Description                                                 |
+|---------|-------|------------|-------------------------------------------------------------|
+| 0.1.0   | 1     | 2026-11-02 | Initial scaffold & infrastructure documentation             |
+| 0.2.0   | 2     | 2026-11-04 | Phase 2 Prisma schema, migrations, seed data & entity specs |

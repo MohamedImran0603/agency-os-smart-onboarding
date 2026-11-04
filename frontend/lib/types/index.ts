@@ -1,59 +1,84 @@
 // ─── Shared TypeScript Types ───────────────────────────────────────────────────
 // Domain types used across the smart-onboarding module.
-// Populated in Phase 2 when the data model is finalised.
-// Keep types here in sync with backend DTOs and Prisma models.
+// Strictly synchronized with Prisma models and backend DTOs.
 
-// ── Agency types ──────────────────────────────────────────────────────────────
+// ── Agency Enums ─────────────────────────────────────────────────────────────
 
 /**
- * Supported agency types for the onboarding profiler.
- * Mirrors the AgencyType enum in schema.prisma (Phase 2).
+ * Supported agency types from Section 6 of the Common Standard.
+ * Mirrors the AgencyType enum in schema.prisma.
  */
 export type AgencyType =
-  | 'CREATIVE'
+  | 'SOFTWARE_DEVELOPMENT'
   | 'DIGITAL_MARKETING'
-  | 'WEB_DEVELOPMENT'
-  | 'PR'
-  | 'CONSULTING'
-  | 'FULL_SERVICE'
-  | 'OTHER';
+  | 'HYBRID';
 
 /**
- * Onboarding wizard step identifiers.
- * Used to drive the multi-step form state machine.
+ * Onboarding lifecycle status.
+ * Mirrors the OnboardingStatus enum in schema.prisma.
  */
-export type OnboardingStep =
-  | 'AGENCY_PROFILE'
-  | 'TEAM_SIZE'
-  | 'TEMPLATE_SELECTION'
-  | 'REVIEW'
-  | 'COMPLETE';
+export type OnboardingStatus =
+  | 'IN_PROGRESS'
+  | 'COMPLETED';
 
-// ── API response shapes (mirroring NestJS response DTOs) ─────────────────────
+// ── Canonical Entities ────────────────────────────────────────────────────────
 
 export interface Agency {
   id: string;
   name: string;
-  type: AgencyType;
   createdAt: string; // ISO 8601
   updatedAt: string;
 }
 
-export interface OnboardingSession {
+export interface AgencyOnboarding {
   id: string;
   agencyId: string;
-  currentStep: OnboardingStep;
-  completedAt: string | null;
+  agencyName: string;
+  agencyType: AgencyType;
+  status: OnboardingStatus;
+  currentStep: number;
+  activatedAt: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface AgencyServiceSelection {
+  id: string;
+  agencyId: string;
+  onboardingId: string;
+  serviceName: string;
+  createdAt: string;
 }
 
 export interface WorkspaceTemplate {
   id: string;
   name: string;
   description: string;
-  agencyTypes: AgencyType[];
-  pipelineCount: number;
-  projectStructureCount: number;
-  taskChecklistCount: number;
+  category: string;
+  agencyType: AgencyType | null;
+  configurationData: Record<string, unknown>;
+  version: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AgencyTemplateSelection {
+  id: string;
+  agencyId: string;
+  onboardingId: string;
+  templateId: string;
+  createdAt: string;
+}
+
+export interface GeneratedWorkspaceConfig {
+  id: string;
+  agencyId: string;
+  onboardingId: string;
+  configType: string; // e.g. "PIPELINE" | "PROJECT" | "TASK" | "MARKETING_WORKFLOW"
+  name: string;
+  configData: Record<string, unknown>;
+  sourceTemplateId: string | null;
+  createdAt: string;
+  updatedAt: string;
 }

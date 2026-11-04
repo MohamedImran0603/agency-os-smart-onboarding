@@ -1,6 +1,6 @@
 // ─── Prisma Schema ─────────────────────────────────────────────────────────────
-// Phase 1: Infrastructure only — models will be added in Phase 2
-// when the data requirements are fully specified.
+// Agency OS · Smart Onboarding Module
+// Tech Stack: NestJS + Prisma + PostgreSQL
 
 generator client {
   provider = "prisma-client-js"
@@ -11,18 +11,136 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Models will be added below in Phase 2.
-// ─────────────────────────────────────────────────────────────────────────────
-//
-// Example (Phase 2 placeholder — do NOT uncomment yet):
-//
-// model Agency {
-//   id          String   @id @default(cuid())
-//   name        String
-//   type        AgencyType
-//   createdAt   DateTime @default(now())
-//   updatedAt   DateTime @updatedAt
-//
-//   onboardingSessions OnboardingSession[]
-// }
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum AgencyType {
+  SOFTWARE_DEVELOPMENT
+  DIGITAL_MARKETING
+  HYBRID
+}
+
+enum OnboardingStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ─── Models ──────────────────────────────────────────────────────────────────
+
+/// 1. Agency (stub/seed only — canonical shared entity, do NOT redesign it)
+model Agency {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Explicit relations for tenant-scoped records
+  onboardings         AgencyOnboarding[]
+  serviceSelections   AgencyServiceSelection[]
+  templateSelections  AgencyTemplateSelection[]
+  generatedConfigs    GeneratedWorkspaceConfig[]
+
+  @@map("agencies")
+}
+
+/// 2. AgencyOnboarding — Tracks wizard progression & profile for an agency
+model AgencyOnboarding {
+  id           String           @id @default(uuid())
+  agencyId     String           @unique
+  agencyName   String
+  agencyType   AgencyType
+  status       OnboardingStatus @default(IN_PROGRESS)
+  currentStep  Int              @default(1)
+  activatedAt  DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  // Foreign keys & relations
+  agency             Agency                    @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  serviceSelections  AgencyServiceSelection[]
+  templateSelections AgencyTemplateSelection[]
+  generatedConfigs   GeneratedWorkspaceConfig[]
+
+  @@index([agencyId])
+  @@map("agency_onboardings")
+}
+
+/// 3. AgencyServiceSelection — Individual services chosen during onboarding
+model AgencyServiceSelection {
+  id           String   @id @default(uuid())
+  agencyId     String
+  onboardingId String
+  serviceName  String
+  createdAt    DateTime @default(now())
+
+  // Foreign keys & relations
+  agency     Agency           @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  onboarding AgencyOnboarding @relation(fields: [onboardingId], references: [id], onDelete: Cascade)
+
+  @@index([agencyId])
+  @@index([onboardingId])
+  @@map("agency_service_selections")
+}
+
+/// 4. WorkspaceTemplate — Pre-packaged pipeline, project, and task configurations
+model WorkspaceTemplate {
+  id                String      @id @default(uuid())
+  name              String
+  description       String
+  category          String
+  agencyType        AgencyType? // Nullable: null means applicable to all agency types
+  configurationData Json
+  version           Int         @default(1)
+  isActive          Boolean     @default(true)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  // Relations
+  templateSelections AgencyTemplateSelection[]
+  generatedConfigs   GeneratedWorkspaceConfig[]
+
+  @@index([agencyType])
+  @@index([category])
+  @@map("workspace_templates")
+}
+
+/// 5. AgencyTemplateSelection — Join entity tracking selected templates
+model AgencyTemplateSelection {
+  id           String   @id @default(uuid())
+  agencyId     String
+  onboardingId String
+  templateId   String
+  createdAt    DateTime @default(now())
+
+  // Foreign keys & relations
+  agency     Agency            @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  onboarding AgencyOnboarding  @relation(fields: [onboardingId], references: [id], onDelete: Cascade)
+  template   WorkspaceTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
+
+  @@index([agencyId])
+  @@index([onboardingId])
+  @@index([templateId])
+  @@map("agency_template_selections")
+}
+
+/// 6. GeneratedWorkspaceConfig — Auto-generated workspace structures created upon confirmation
+model GeneratedWorkspaceConfig {
+  id               String   @id @default(uuid())
+  agencyId         String
+  onboardingId     String
+  configType       String   // e.g. "PIPELINE" | "PROJECT" | "TASK" | "MARKETING_WORKFLOW"
+  name             String
+  configData       Json
+  sourceTemplateId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Foreign keys & relations
+  agency         Agency             @relation(fields: [agencyId], references: [id], onDelete: Restrict)
+  onboarding     AgencyOnboarding   @relation(fields: [onboardingId], references: [id], onDelete: Cascade)
+  sourceTemplate WorkspaceTemplate? @relation(fields: [sourceTemplateId], references: [id], onDelete: SetNull)
+
+  @@index([agencyId])
+  @@index([onboardingId])
+  @@index([sourceTemplateId])
+  @@map("generated_workspace_configs")
+}
