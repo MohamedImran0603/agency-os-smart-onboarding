@@ -158,8 +158,8 @@ export default function SmartOnboardingPage() {
 
         {currentStep === 2 && (
           <AgencyProfileStep
-            initialName={state?.agencyName === 'New Agency' ? '' : state?.agencyName}
-            initialType={state?.agencyType}
+            initialName={state?.agencyName === 'New Agency' ? '' : (state?.agencyName ?? '')}
+            initialType={state?.agencyType ?? 'SOFTWARE_DEVELOPMENT'}
             onNext={handleSaveProfile}
             onBack={() => setCurrentStep(1)}
           />

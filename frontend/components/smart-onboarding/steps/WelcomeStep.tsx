@@ -6,7 +6,7 @@ import { Badge } from '../../ui/Badge';
 export interface WelcomeStepProps {
   onStart: () => void;
   isContinuing?: boolean;
-  currentStep?: number;
+  currentStep?: number | undefined;
 }
 
 export const WelcomeStep: React.FC<WelcomeStepProps> = ({

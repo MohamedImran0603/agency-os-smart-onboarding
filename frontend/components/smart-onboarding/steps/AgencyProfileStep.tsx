@@ -5,8 +5,8 @@ import { Input } from '../../ui/Input';
 import { AgencyType } from '../../../lib/types/onboarding';
 
 export interface AgencyProfileStepProps {
-  initialName?: string;
-  initialType?: AgencyType;
+  initialName?: string | undefined;
+  initialType?: AgencyType | undefined;
   onNext: (data: { agencyName: string; agencyType: AgencyType }) => Promise<void>;
   onBack: () => void;
 }

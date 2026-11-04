@@ -15,3 +15,4 @@ declare const beforeEach: (fn: () => any) => void;
 declare const afterEach: (fn: () => any) => void;
 declare const expect: (actual: any) => any;
 declare const jest: any;
+

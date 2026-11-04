@@ -7,7 +7,7 @@ import { AgencyType } from '../../../lib/types/onboarding';
 
 export interface ServicesSelectionStepProps {
   agencyType: AgencyType;
-  initialServices?: string[];
+  initialServices?: string[] | undefined;
   onNext: (services: string[]) => Promise<void>;
   onBack: () => void;
 }

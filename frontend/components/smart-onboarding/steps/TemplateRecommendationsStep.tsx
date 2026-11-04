@@ -8,7 +8,7 @@ import { getRecommendedTemplates } from '../../../lib/api/onboarding';
 
 export interface TemplateRecommendationsStepProps {
   agencyType: AgencyType;
-  initialSelectedIds?: string[];
+  initialSelectedIds?: string[] | undefined;
   onNext: (templateIds: string[]) => Promise<void>;
   onBack: () => void;
 }
