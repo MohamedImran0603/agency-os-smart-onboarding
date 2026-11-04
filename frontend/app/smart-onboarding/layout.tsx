@@ -11,13 +11,13 @@ export default function SmartOnboardingLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col font-sans">
-      {/* ─── Top Bar ───────────────────────────────────────────────────────── */}
-      <header className="h-16 bg-surface border-b border-border sticky top-0 z-30 px-4 md:px-8 flex items-center justify-between">
+    <div className="min-h-screen bg-transparent flex flex-col font-sans relative">
+      {/* ─── Top Bar (Glassmorphic) ────────────────────────────────────────── */}
+      <header className="h-16 glass-nav sticky top-0 z-40 px-4 md:px-8 flex items-center justify-between transition-all">
         <div className="flex items-center space-x-4">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="md:hidden p-2 rounded-lg text-textSecondary hover:bg-slate-100"
+            className="md:hidden p-2 rounded-xl text-textSecondary hover:bg-white/80 border border-transparent hover:border-slate-200 transition-colors"
             aria-label="Toggle menu"
           >
             <svg className="w-5 h-5" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,121 +25,118 @@ export default function SmartOnboardingLayout({
             </svg>
           </button>
 
-          <Link href="/smart-onboarding" className="flex items-center space-x-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-base shadow-sm">
-              A
+          <Link href="/smart-onboarding" className="flex items-center space-x-2.5 group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform">
+              ⚡
             </div>
-            <span className="font-bold text-lg text-textPrimary tracking-tight">
-              Agency OS
-            </span>
+            <div className="flex flex-col">
+              <span className="font-extrabold text-lg text-textPrimary tracking-tight leading-none flex items-center gap-1.5">
+                Agency OS <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">v2.0</span>
+              </span>
+              <span className="text-[10px] text-textSecondary font-medium">Smart Onboarding Suite</span>
+            </div>
           </Link>
-
-          <span className="hidden md:inline-block text-border font-light">|</span>
-          <span className="hidden md:inline-block text-sm font-medium text-textSecondary">
-            Smart Onboarding Wizard
-          </span>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           <Link
             href="/templates"
-            className="hidden sm:inline-flex text-xs font-semibold text-primary hover:text-primaryDark px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primaryDark px-3.5 py-2 rounded-xl glass-panel hover:bg-white transition-all shadow-2xs hover:shadow-sm"
           >
-            Template Catalog
+            <span>📋</span>
+            <span>Template Catalog</span>
           </Link>
 
-          {/* Notification Icon */}
-          <button
-            className="p-2 text-textSecondary hover:text-textPrimary rounded-lg hover:bg-slate-100 transition-colors"
-            title="Notifications"
-          >
-            <svg className="w-5 h-5" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              />
-            </svg>
-          </button>
-
-          {/* User Avatar Placeholder */}
-          <div className="flex items-center space-x-2.5 pl-2 border-l border-border">
-            <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-xs font-semibold text-textPrimary">
-              NT
+          {/* User Profile Card */}
+          <div className="flex items-center space-x-2.5 pl-3 border-l border-slate-200/80">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 border border-white/60 flex items-center justify-center text-xs font-bold text-white shadow-sm">
+              ✨ NT
             </div>
             <div className="hidden lg:block text-left">
-              <p className="text-xs font-semibold text-textPrimary leading-none">Neirah Tech</p>
-              <p className="text-[10px] text-textSecondary leading-none mt-1">Admin Demo</p>
+              <p className="text-xs font-bold text-textPrimary leading-none flex items-center gap-1">
+                Neirah Tech <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              </p>
+              <p className="text-[10px] text-textSecondary leading-none mt-1">Tenant: Admin Demo</p>
             </div>
           </div>
         </div>
       </header>
 
       {/* ─── Shell Body: Sidebar + Main Content ────────────────────────────── */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 md:px-8 py-6 gap-8">
         {/* Sidebar */}
         <aside
-          className={`fixed inset-y-16 left-0 z-20 w-64 bg-surface border-r border-border transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static ${
+          className={`fixed inset-y-16 left-0 z-30 w-64 glass-panel border-r border-white/80 p-5 space-y-6 transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:w-60 md:rounded-2xl md:p-4 md:shadow-xs ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <div className="p-4 space-y-6">
-            <div>
-              <p className="text-[11px] font-bold text-textSecondary uppercase tracking-wider px-3 mb-2">
-                Onboarding
-              </p>
-              <nav className="space-y-1">
-                <Link
-                  href="/smart-onboarding"
-                  className="flex items-center space-x-3 px-3 py-2 text-sm font-semibold rounded-lg bg-blue-50 text-primary"
-                >
-                  <svg className="w-4 h-4 text-primary" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>Guided Wizard</span>
-                </Link>
+          <div>
+            <p className="text-[11px] font-bold text-textSecondary/80 uppercase tracking-wider px-3 mb-2 flex items-center justify-between">
+              <span>Onboarding</span>
+              <span className="text-xs">🚀</span>
+            </p>
+            <nav className="space-y-1">
+              <Link
+                href="/smart-onboarding"
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center space-x-3 px-3.5 py-2.5 text-sm font-bold rounded-xl bg-blue-50/90 text-primary border border-blue-200/60 shadow-xs"
+              >
+                <span>⚡</span>
+                <span>Guided Wizard</span>
+              </Link>
 
-                <Link
-                  href="/templates"
-                  className="flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-lg text-textSecondary hover:bg-slate-50 hover:text-textPrimary transition-colors"
-                >
-                  <svg className="w-4 h-4" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                  <span>Template Library</span>
-                </Link>
-              </nav>
-            </div>
+              <Link
+                href="/templates"
+                onClick={() => setSidebarOpen(false)}
+                className="flex items-center space-x-3 px-3.5 py-2.5 text-sm font-medium rounded-xl text-textSecondary hover:bg-white/80 hover:text-textPrimary transition-all"
+              >
+                <span>📦</span>
+                <span>Template Library</span>
+              </Link>
+            </nav>
+          </div>
 
-            <div className="pt-4 border-t border-border">
-              <p className="text-[11px] font-bold text-textSecondary uppercase tracking-wider px-3 mb-2">
-                Agency OS Modules
-              </p>
-              <nav className="space-y-1 text-sm text-textSecondary/60 select-none">
-                <div className="flex items-center space-x-3 px-3 py-2 rounded-lg cursor-not-allowed">
-                  <span>💼 Pipeline CRM</span>
-                  <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">Setup Req</span>
-                </div>
-                <div className="flex items-center space-x-3 px-3 py-2 rounded-lg cursor-not-allowed">
-                  <span>📁 Project Hub</span>
-                  <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">Setup Req</span>
-                </div>
-                <div className="flex items-center space-x-3 px-3 py-2 rounded-lg cursor-not-allowed">
-                  <span>✅ Task Checklists</span>
-                  <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">Setup Req</span>
-                </div>
-              </nav>
+          <div className="pt-4 border-t border-slate-200/60">
+            <p className="text-[11px] font-bold text-textSecondary/80 uppercase tracking-wider px-3 mb-2">
+              Agency OS Modules
+            </p>
+            <nav className="space-y-1 text-sm text-textSecondary/60 select-none">
+              <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
+                <span>📊</span>
+                <span>Pipelines & Sprints</span>
+              </div>
+              <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
+                <span>📁</span>
+                <span>Client Projects</span>
+              </div>
+              <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
+                <span>📈</span>
+                <span>Campaign Hub</span>
+              </div>
+              <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
+                <span>⚙️</span>
+                <span>Tenant Isolation</span>
+              </div>
+            </nav>
+          </div>
+
+          {/* Quick Help Card */}
+          <div className="p-3.5 rounded-xl bg-gradient-to-br from-blue-50/70 to-indigo-50/70 border border-blue-100/60 text-xs text-textSecondary space-y-1.5">
+            <div className="flex items-center gap-1.5 font-bold text-textPrimary">
+              <span>💡</span>
+              <span>Need Assistance?</span>
             </div>
+            <p className="text-[11px] leading-relaxed">
+              Section 7 Smart Onboarding auto-provisions tenant configs atomically upon activation.
+            </p>
           </div>
         </aside>
 
-        {/* Content Area */}
-        <main className="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full">
+        {/* Main Content Area */}
+        <main className="flex-1 min-w-0 transition-all">
           {children}
         </main>
       </div>
     </div>
   );
 }
-

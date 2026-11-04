@@ -7,7 +7,7 @@ import { activateOnboarding } from '../../../lib/api/onboarding';
 
 export interface ReviewAndConfirmStepProps {
   state: AgencyOnboardingState;
-  onActivated: (res: ActivationResponse) => void;
+  onActivated: (data: ActivationResponse) => void;
   onBack: () => void;
 }
 
@@ -19,9 +19,8 @@ export const ReviewAndConfirmStep: React.FC<ReviewAndConfirmStepProps> = ({
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [accordionOpen, setAccordionOpen] = useState(false);
 
-  const handleActivate = async () => {
+  const handleConfirmActivate = async () => {
     try {
       setIsSubmitting(true);
       setError(null);
@@ -79,142 +78,143 @@ export const ReviewAndConfirmStep: React.FC<ReviewAndConfirmStepProps> = ({
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <Card className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold text-textPrimary tracking-tight">
-            Step 6 · Review & Activate Workspace
-          </h2>
-          <p className="text-sm text-textSecondary mt-1">
-            Review your configuration summary before provisioning the production environment.
-          </p>
+      <Card className="p-6 md:p-10 space-y-7 glass-panel border border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-3xl">
+        <div className="flex items-start justify-between pb-2 border-b border-slate-200/60">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+              <span>🔒</span>
+              <span>Step 6 of 7</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-textPrimary tracking-tight">
+              Review & Activate Workspace
+            </h2>
+            <p className="text-sm text-textSecondary mt-1">
+              Confirm your agency configuration. Upon activation, all pipelines and workspace boards will be generated atomically.
+            </p>
+          </div>
+          <Badge variant="warning" className="gap-1 font-bold">
+            ⚡ Ready to Provision
+          </Badge>
         </div>
 
         {error && (
-          <div className="p-3.5 bg-rose-50 border border-rose-200 text-error rounded-lg text-sm flex items-center space-x-2">
+          <div className="p-3.5 bg-rose-50/90 border border-rose-200/80 text-error rounded-xl text-xs flex items-center space-x-2">
             <span>⚠️</span>
             <span>{error}</span>
           </div>
         )}
 
-        {/* Agency Summary */}
-        <div className="p-5 rounded-xl bg-slate-50 border border-border space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-textSecondary uppercase tracking-wider">
-              Agency Profile
+        {/* Configuration Review Summary Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2">
+            <span className="text-[11px] font-bold text-textSecondary uppercase tracking-wider flex items-center gap-1.5">
+              <span>🏢</span>
+              <span>Agency Entity</span>
             </span>
-            <Badge variant="success">Step 2 Verified</Badge>
-          </div>
-          <div className="flex items-baseline justify-between">
-            <div>
-              <h3 className="text-xl font-extrabold text-textPrimary">{state.agencyName}</h3>
-              <p className="text-xs text-textSecondary mt-0.5">{formattedType}</p>
+            <p className="text-base font-extrabold text-textPrimary">
+              {state.agencyName || 'Your Agency'}
+            </p>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs">🏷️</span>
+              <span className="font-semibold text-primary">{formattedType}</span>
             </div>
-            <span className="text-xs font-mono text-textSecondary">Tenant ID: {state.agencyId.slice(0, 8)}...</span>
           </div>
-        </div>
 
-        {/* Selected Services */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-textSecondary uppercase tracking-wider">
-              Selected Core Services ({state.serviceSelections.length})
-            </h4>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {state.serviceSelections.map((s) => (
-              <Badge key={s.id} variant="default" className="text-xs py-1 px-3 bg-white shadow-2xs">
-                {s.serviceName}
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* Selected Templates */}
-        <div className="space-y-3">
-          <h4 className="text-xs font-bold text-textSecondary uppercase tracking-wider">
-            Workspace Templates ({state.templateSelections.length})
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {state.templateSelections.map((ts) => (
-              <div
-                key={ts.id}
-                className="p-3.5 rounded-lg border border-border bg-white flex items-start justify-between shadow-2xs"
-              >
-                <div>
-                  <h5 className="text-sm font-bold text-textPrimary">{ts.template?.name}</h5>
-                  <p className="text-xs text-textSecondary mt-0.5">{ts.template?.category}</p>
-                </div>
-                <span className="text-emerald-600 text-xs font-bold">✓ Selected</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Collapsible Architecture Accordion */}
-        <div className="border border-border rounded-lg overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setAccordionOpen(!accordionOpen)}
-            className="w-full px-4 py-3 bg-slate-50 text-left text-xs font-bold text-textPrimary flex items-center justify-between"
-          >
-            <span>Automated Provisioning Plan (Technical Breakdown)</span>
-            <span>{accordionOpen ? '▲' : '▼'}</span>
-          </button>
-          {accordionOpen && (
-            <div className="p-4 bg-white text-xs text-textSecondary space-y-2 border-t border-border">
-              <p>• Atomic database transaction executing in isolation.</p>
-              <p>• Generating pipeline boards with custom WIP limits and stages.</p>
-              <p>• Pre-populating sprint deliverables and QA checklists.</p>
-              <p>• Marking agency onboarding lifecycle status as <strong>COMPLETED</strong>.</p>
+          <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2">
+            <span className="text-[11px] font-bold text-textSecondary uppercase tracking-wider flex items-center gap-1.5">
+              <span>🛡️</span>
+              <span>Tenant Security</span>
+            </span>
+            <p className="font-mono text-xs font-semibold text-textPrimary truncate">
+              {state.agencyId}
+            </p>
+            <div className="flex items-center gap-1.5 text-emerald-600 font-semibold">
+              <span>✓</span>
+              <span>Strict Multitenant Isolation</span>
             </div>
-          )}
+          </div>
+
+          <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2 md:col-span-2">
+            <span className="text-[11px] font-bold text-textSecondary uppercase tracking-wider flex items-center gap-1.5">
+              <span>🛠️</span>
+              <span>Selected Services ({state.serviceSelections.length})</span>
+            </span>
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {state.serviceSelections.map((s) => (
+                <span
+                  key={s.id}
+                  className="px-2.5 py-1 rounded-xl glass-pill text-xs font-medium text-textPrimary flex items-center gap-1"
+                >
+                  <span>✨</span>
+                  <span>{s.serviceName}</span>
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-border">
-          <Button variant="secondary" type="button" onClick={onBack} disabled={isSubmitting}>
-            Back
+        {/* Call to action & Warning */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-50/70 to-indigo-50/70 border border-blue-200/60 text-xs text-textSecondary flex items-start space-x-3">
+          <span className="text-xl shrink-0">ℹ️</span>
+          <div className="space-y-1">
+            <p className="font-bold text-textPrimary">
+              Atomic Provisioning Guarantee
+            </p>
+            <p className="leading-relaxed">
+              Activating your workspace executes an atomic transaction that registers tenant workspace configurations and marks your agency onboarding lifecycle as COMPLETED.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-4 border-t border-slate-200/70">
+          <Button variant="secondary" onClick={onBack}>
+            ← Back to Preview
           </Button>
           <Button
-            size="lg"
             onClick={() => setShowModal(true)}
-            loading={isSubmitting}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white shadow-md font-semibold"
+            className="shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40"
           >
-            🚀 Activate Workspace
+            🚀 Activate Workspace Now
           </Button>
         </div>
       </Card>
 
-      {/* Confirmation Modal */}
+      {/* Confirmation Glass Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <Card className="max-w-md w-full p-6 space-y-5 animate-fade-in shadow-2xl">
-            <div className="flex items-start space-x-3">
-              <div className="w-10 h-10 rounded-full bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-textPrimary">Confirm Workspace Activation</h3>
-                <p className="text-xs text-textSecondary mt-1 leading-relaxed">
-                  This will generate your agency pipelines, task boards, and initial templates. You can customize them anytime later from settings.
-                </p>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-fade-in">
+          <div className="glass-panel border border-white/90 rounded-3xl max-w-md w-full p-6 md:p-8 space-y-5 shadow-2xl">
+            <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center mx-auto text-2xl shadow-md shadow-blue-500/20">
+              ⚡
+            </div>
+            <div className="text-center space-y-2">
+              <h3 className="text-xl font-extrabold text-textPrimary tracking-tight">
+                Provision Workspace Environment?
+              </h3>
+              <p className="text-xs text-textSecondary leading-relaxed">
+                This will lock your onboarding selections and generate your pipeline configurations inside database tenant <span className="font-mono text-textPrimary font-semibold">{state.agencyName}</span>.
+              </p>
             </div>
 
-            <div className="flex items-center justify-end space-x-3 pt-3 border-t border-border">
-              <Button variant="secondary" onClick={() => setShowModal(false)} disabled={isSubmitting}>
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <Button
+                variant="secondary"
+                onClick={() => setShowModal(false)}
+                disabled={isSubmitting}
+                className="w-full"
+              >
                 Cancel
               </Button>
-              <Button onClick={handleActivate} loading={isSubmitting} className="bg-emerald-600 hover:bg-emerald-700">
-                Confirm & Generate
+              <Button
+                onClick={handleConfirmActivate}
+                loading={isSubmitting}
+                className="w-full shadow-md shadow-blue-500/30"
+              >
+                Yes, Activate ➔
               </Button>
             </div>
-          </Card>
+          </div>
         </div>
       )}
     </div>
   );
 };
-

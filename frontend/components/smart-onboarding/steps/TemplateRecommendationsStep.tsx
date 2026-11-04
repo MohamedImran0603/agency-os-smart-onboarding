@@ -55,7 +55,7 @@ export const TemplateRecommendationsStep: React.FC<TemplateRecommendationsStepPr
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [agencyType, initialSelectedIds]);
 
   const toggleTemplate = (id: string) => {
     setSelectedIds((prev) =>
@@ -66,20 +66,14 @@ export const TemplateRecommendationsStep: React.FC<TemplateRecommendationsStepPr
 
   const getMatchReason = (t: WorkspaceTemplate): string => {
     if (t.agencyType === agencyType) {
-      const typeLabel =
-        agencyType === 'SOFTWARE_DEVELOPMENT'
-          ? 'Software Development'
-          : agencyType === 'DIGITAL_MARKETING'
-          ? 'Digital Marketing'
-          : 'Hybrid';
-      return `Matched: ${typeLabel} archetype`;
+      return `Direct match for your ${agencyType.replace(/_/g, ' ')} profile`;
     }
-    return 'Universal hybrid workspace template';
+    return 'Universal framework applicable to all agency archetypes';
   };
 
   const handleNext = async () => {
     if (selectedIds.length === 0) {
-      setError('Please select at least one workspace template to continue.');
+      setError('Please select at least one workspace template to generate.');
       return;
     }
 
@@ -95,75 +89,71 @@ export const TemplateRecommendationsStep: React.FC<TemplateRecommendationsStepPr
   };
 
   return (
-    <Card className="max-w-4xl mx-auto space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <Card className="max-w-4xl mx-auto p-6 md:p-10 space-y-7 glass-panel border border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-3xl">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-slate-200/60">
         <div>
-          <h2 className="text-2xl font-bold text-textPrimary tracking-tight">
-            Step 4 · Recommended Templates
+          <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+            <span>📦</span>
+            <span>Step 4 of 7</span>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-textPrimary tracking-tight">
+            Recommended Workspace Templates
           </h2>
           <p className="text-sm text-textSecondary mt-1">
-            Production-tested delivery pipelines and task checklists tailored for your agency.
+            Pre-built pipeline boards, sprint structures, and task checklists tailored to your agency profile.
           </p>
         </div>
-        <Badge variant={selectedIds.length > 0 ? 'success' : 'default'} className="self-start">
-          {selectedIds.length} Selected
-        </Badge>
+
+        <div className="flex items-center gap-2">
+          <Badge variant={selectedIds.length > 0 ? 'success' : 'default'} className="px-3 py-1 font-bold">
+            ✨ {selectedIds.length} Selected
+          </Badge>
+        </div>
       </div>
 
       {error && (
-        <div className="p-3.5 bg-rose-50 border border-rose-200 text-error rounded-lg text-sm flex items-center space-x-2">
+        <div className="p-3.5 bg-rose-50/90 border border-rose-200/80 text-error rounded-xl text-xs flex items-center space-x-2">
           <span>⚠️</span>
           <span>{error}</span>
         </div>
       )}
 
       {loading ? (
-        <div className="py-16 text-center text-textSecondary flex flex-col items-center space-y-3">
-          <svg className="animate-spin h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24">
+        <div className="py-16 text-center flex flex-col items-center justify-center space-y-3">
+          <svg className="animate-spin h-8 w-8 text-primary" width="32" height="32" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
-          <p className="text-sm font-medium">Matching workspace templates...</p>
-        </div>
-      ) : templates.length === 0 ? (
-        <div className="py-12 text-center text-textSecondary">
-          <p className="text-base font-semibold">No templates found.</p>
-          <p className="text-xs mt-1">Please ensure database seed has been executed.</p>
+          <p className="text-xs font-semibold text-textSecondary">
+            Matching industry templates to your selected offerings...
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {templates.map((template) => {
-            const isSelected = selectedIds.includes(template.id);
-            const stagesCount = template.configurationData?.pipeline?.stages?.length;
-            const taskCount = template.configurationData?.taskChecklists?.length;
-
-            return (
-              <TemplateCard
-                key={template.id}
-                id={template.id}
-                name={template.name}
-                description={template.description}
-                category={template.category}
-                selected={isSelected}
-                onToggle={() => toggleTemplate(template.id)}
-                whyRecommended={getMatchReason(template)}
-                pipelineStagesCount={stagesCount}
-                taskCount={taskCount}
-              />
-            );
-          })}
+          {templates.map((template) => (
+            <TemplateCard
+              key={template.id}
+              id={template.id}
+              name={template.name}
+              description={template.description}
+              category={template.category}
+              selected={selectedIds.includes(template.id)}
+              onToggle={() => toggleTemplate(template.id)}
+              whyRecommended={getMatchReason(template)}
+              pipelineStagesCount={template.configurationData?.pipeline?.stages?.length || 5}
+            />
+          ))}
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-4 border-t border-border">
-        <Button variant="secondary" type="button" onClick={onBack}>
-          Back
+      <div className="flex items-center justify-between pt-4 border-t border-slate-200/70">
+        <Button variant="secondary" onClick={onBack}>
+          ← Back
         </Button>
-        <Button onClick={handleNext} loading={isSubmitting} disabled={loading || templates.length === 0}>
-          Preview Workspace Generation
+        <Button onClick={handleNext} loading={isSubmitting} className="shadow-md shadow-blue-500/25">
+          Generate Workspace Preview ➔
         </Button>
       </div>
     </Card>
   );
 };
-

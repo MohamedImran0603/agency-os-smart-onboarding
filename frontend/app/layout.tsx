@@ -25,8 +25,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-background text-textPrimary antialiased font-sans">
-        {children}
+      <body className="min-h-screen bg-background text-textPrimary antialiased font-sans relative">
+        {/* Ambient atmospheric backdrop for Glassmorphism */}
+        <div className="ambient-glow-1" aria-hidden="true" />
+        <div className="ambient-glow-2" aria-hidden="true" />
+        <div className="ambient-glow-3" aria-hidden="true" />
+        <div className="relative z-10">{children}</div>
       </body>
     </html>
   );
