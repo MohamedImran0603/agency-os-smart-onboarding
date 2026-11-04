@@ -24,6 +24,7 @@
 ## Project Overview
 
 When a new agency signs up for **Agency OS**, rather than facing empty dashboards, they complete an intuitive 7-step guided wizard that:
+
 * **Profiles Archetype**: Selects Software Development, Digital Marketing, or Hybrid model.
 * **Selects Core Services**: Tailors deliverables and service categories.
 * **Deterministic Template Recommendations**: Matches battle-tested pipeline boards and task checklists.
@@ -47,6 +48,7 @@ When a new agency signs up for **Agency OS**, rather than facing empty dashboard
 ## Prerequisites
 
 Ensure you have the following installed locally:
+
 * **Node.js**: v18.17.0+ or v20+
 * **npm**: v9+ or v10+
 * **PostgreSQL**: v14+ (or connection string from Supabase / Neon / Docker)
@@ -72,6 +74,7 @@ npm install
 ## Environment Setup
 
 ### 1. Backend Environment
+
 Copy the example environment file in `backend/`:
 
 ```bash
@@ -80,6 +83,7 @@ cp .env.example .env
 ```
 
 Configure your `.env` variables:
+
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/agency_os?schema=public"
 JWT_SECRET="super-secret-development-jwt-key"
@@ -88,6 +92,7 @@ FRONTEND_URL="http://localhost:3000"
 ```
 
 ### 2. Frontend Environment
+
 Copy the example environment file in `frontend/`:
 
 ```bash
@@ -96,6 +101,7 @@ cp .env.example .env.local
 ```
 
 Configure your `.env.local` variables:
+
 ```env
 NEXT_PUBLIC_API_BASE_URL="http://localhost:5000/api"
 NEXT_PUBLIC_DEMO_AGENCY_ID="a0000000-0000-0000-0000-000000000001"
