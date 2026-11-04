@@ -1,8 +1,5 @@
-// ─── Common barrel export ──────────────────────────────────────────────────────
-// Shared utilities, decorators, guards, filters, and interceptors
-// are exported from here. Populated in Phase 2+.
-
-// export * from './decorators';
-// export * from './guards';
-// export * from './filters';
-// export * from './interceptors';
+// ─── Common Barrel Export ───────────────────────────────────────────────────
+export * from './guards/agency-context.guard';
+export * from './decorators/agency-id.decorator';
+export * from './filters/http-exception.filter';
+export * from './interceptors/transform.interceptor';

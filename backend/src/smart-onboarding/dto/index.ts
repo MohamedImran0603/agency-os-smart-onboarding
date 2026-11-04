@@ -1,48 +1,69 @@
-import { IsString, IsNotEmpty, IsEnum, IsUUID, IsInt, Min, IsArray, ArrayNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  MinLength,
+  IsArray,
+  ArrayNotEmpty,
+  ArrayMinSize,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export enum AgencyTypeEnum {
+export enum AgencyType {
   SOFTWARE_DEVELOPMENT = 'SOFTWARE_DEVELOPMENT',
   DIGITAL_MARKETING = 'DIGITAL_MARKETING',
   HYBRID = 'HYBRID',
 }
 
-export class CreateAgencyOnboardingDto {
-  @ApiProperty({ description: 'Explicit Agency ID (UUID)', example: 'a0000000-0000-0000-0000-000000000001' })
-  @IsUUID()
-  @IsNotEmpty()
-  agencyId: string;
-
-  @ApiProperty({ description: 'Legal / brand name of the agency', example: 'Apex Digital Labs' })
+export class SaveProfileDto {
+  @ApiProperty({
+    description: 'Legal / brand name of the agency',
+    example: 'Apex Digital Labs',
+    minLength: 2,
+  })
   @IsString()
   @IsNotEmpty()
+  @MinLength(2, { message: 'agencyName must be at least 2 characters long' })
   agencyName: string;
 
-  @ApiProperty({ enum: AgencyTypeEnum, description: 'Primary business archetype of the agency' })
-  @IsEnum(AgencyTypeEnum)
+  @ApiProperty({
+    enum: AgencyType,
+    description: 'Business archetype of the agency',
+    example: AgencyType.SOFTWARE_DEVELOPMENT,
+  })
+  @IsEnum(AgencyType, {
+    message: 'agencyType must be one of: SOFTWARE_DEVELOPMENT, DIGITAL_MARKETING, HYBRID',
+  })
   @IsNotEmpty()
-  agencyType: AgencyTypeEnum;
+  agencyType: AgencyType;
 }
 
-export class UpdateOnboardingStepDto {
-  @ApiProperty({ description: 'Current active wizard step number', example: 2 })
-  @IsInt()
-  @Min(1)
-  currentStep: number;
-}
-
-export class SelectServicesDto {
-  @ApiProperty({ description: 'List of services selected by the agency', type: [String] })
+export class SaveServicesDto {
+  @ApiProperty({
+    description: 'Array of services selected for this agency (minimum 1 item)',
+    type: [String],
+    example: ['Web Application Development', 'SaaS Product Architecture'],
+  })
   @IsArray()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
-  serviceNames: string[];
+  @ArrayNotEmpty({ message: 'services array must not be empty' })
+  @ArrayMinSize(1, { message: 'At least one service must be selected' })
+  @IsString({ each: true, message: 'Each service name must be a string' })
+  services: string[];
 }
 
-export class SelectTemplatesDto {
-  @ApiProperty({ description: 'List of template IDs selected by the agency', type: [String] })
+export class SaveTemplatesDto {
+  @ApiProperty({
+    description: 'Array of workspace template IDs to provision (minimum 1 item)',
+    type: [String],
+    example: ['t0000000-0000-0000-0000-000000000001'],
+  })
   @IsArray()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
+  @ArrayNotEmpty({ message: 'templateIds array must not be empty' })
+  @ArrayMinSize(1, { message: 'At least one template ID must be selected' })
+  @IsString({ each: true, message: 'Each template ID must be a string' })
   templateIds: string[];
+}
+
+export class ActivateOnboardingDto {
+  // Empty DTO — activation executes purely using the saved state in the database
 }

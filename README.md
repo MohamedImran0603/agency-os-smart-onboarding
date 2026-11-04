@@ -1,9 +1,6 @@
 # Smart Onboarding — Agency OS · Neirah Tech
 
-> A production-ready **NestJS + Next.js** module that guides new agencies
-> through an intelligent onboarding wizard, profiles their agency type,
-> recommends workspace templates, and auto-generates their entire workspace
-> configuration upon confirmation.
+> A production-ready **NestJS + Next.js** module that guides new agencies through an intelligent onboarding wizard, profiles their agency type, recommends workspace templates, and auto-generates their entire workspace configuration upon confirmation.
 
 ---
 
@@ -11,215 +8,182 @@
 
 1. [Project Overview](#project-overview)
 2. [Tech Stack](#tech-stack)
-3. [Repository Structure](#repository-structure)
-4. [Prerequisites](#prerequisites)
-5. [Getting Started](#getting-started)
-6. [Environment Variables](#environment-variables)
-7. [Database Setup](#database-setup)
-8. [Running the Application](#running-the-application)
-9. [Testing](#testing)
-10. [Phase Roadmap](#phase-roadmap)
+3. [Prerequisites](#prerequisites)
+4. [Installation](#installation)
+5. [Environment Setup](#environment-setup)
+6. [Database Migration & Seed Data](#database-migration--seed-data)
+7. [Running Backend](#running-backend)
+8. [Running Frontend](#running-frontend)
+9. [Running Tests](#running-tests)
+10. [Build for Production](#build-for-production)
 11. [API Documentation](#api-documentation)
-12. [Contributing](#contributing)
+12. [Technical Handover](#technical-handover)
 
 ---
 
 ## Project Overview
 
-When a new agency signs up for **Agency OS**, instead of facing blank screens
-they are guided through a smart onboarding wizard that:
-
-- **Profiles** the agency type (Creative, Digital Marketing, Web Dev, PR, etc.)
-- **Recommends** workspace templates (pipelines, project structures, task checklists)
-- **Auto-generates** the entire workspace configuration upon confirmation
+When a new agency signs up for **Agency OS**, rather than facing empty dashboards, they complete an intuitive 7-step guided wizard that:
+* **Profiles Archetype**: Selects Software Development, Digital Marketing, or Hybrid model.
+* **Selects Core Services**: Tailors deliverables and service categories.
+* **Deterministic Template Recommendations**: Matches battle-tested pipeline boards and task checklists.
+* **Workspace Preview & Customization**: Inspects and localizes stages and project structures.
+* **Atomic Workspace Provisioning**: Auto-generates tenant-scoped `GeneratedWorkspaceConfig` records via atomic transaction.
 
 ---
 
 ## Tech Stack
 
-| Layer      | Technology                                      |
-|------------|-------------------------------------------------|
-| Frontend   | Next.js 14 · TypeScript · Tailwind CSS (App Router) |
-| Backend    | NestJS · TypeScript                             |
-| Database   | PostgreSQL · Prisma ORM                         |
-| Auth       | JWT · RBAC (Phase 3)                            |
-| Testing    | Jest · Supertest · API integration tests        |
-| API Docs   | Swagger / OpenAPI (auto-generated)              |
-
----
-
-## Repository Structure
-
-```
-module-submission/
-├── frontend/
-│   ├── app/
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
-│   │   └── smart-onboarding/
-│   │       └── page.tsx
-│   ├── components/
-│   │   ├── ui/                   ← Shared UI primitives
-│   │   └── smart-onboarding/     ← Wizard-specific components
-│   ├── lib/
-│   │   ├── api/                  ← Typed HTTP client
-│   │   ├── types/                ← Domain types / interfaces
-│   │   └── utils/                ← Pure utility functions
-│   ├── public/
-│   ├── middleware.ts             ← Auth guard (Edge Runtime)
-│   ├── next.config.ts
-│   ├── tailwind.config.ts
-│   ├── postcss.config.ts
-│   ├── package.json
-│   └── tsconfig.json
-├── backend/
-│   ├── prisma/
-│   │   ├── schema.prisma
-│   │   └── migrations/
-│   ├── src/
-│   │   ├── smart-onboarding/
-│   │   │   ├── dto/
-│   │   │   ├── smart-onboarding.controller.ts
-│   │   │   ├── smart-onboarding.service.ts
-│   │   │   └── smart-onboarding.module.ts
-│   │   ├── common/              ← Guards, filters, interceptors, decorators
-│   │   ├── prisma/              ← Global PrismaModule + PrismaService
-│   │   ├── app.module.ts
-│   │   └── main.ts
-│   ├── test/
-│   │   ├── app.e2e-spec.ts
-│   │   └── jest-e2e.json
-│   ├── .env.example
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── tsconfig.build.json
-├── .gitignore
-├── README.md
-└── API_DOCUMENTATION.md
-```
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS |
+| **Backend** | NestJS · TypeScript · Prisma ORM · Swagger / OpenAPI |
+| **Database** | PostgreSQL · Prisma Migrations |
+| **Multi-Tenancy** | Strict tenant scoping via `agencyId` context & restrictive cascades |
+| **Testing** | Jest · Supertest · Automated unit & integration test suites |
 
 ---
 
 ## Prerequisites
 
-- **Node.js** ≥ 20.x
-- **pnpm** ≥ 8.x (or npm ≥ 10.x)
-- **PostgreSQL** ≥ 15
-- **Git**
+Ensure you have the following installed locally:
+* **Node.js**: v18.17.0+ or v20+
+* **npm**: v9+ or v10+
+* **PostgreSQL**: v14+ (or connection string from Supabase / Neon / Docker)
 
 ---
 
-## Getting Started
+## Installation
 
-### 1. Clone the repository
+Clone the repository and install dependencies in both applications:
 
 ```bash
-git clone <repository-url>
-cd module-submission
+# 1. Install Backend Dependencies
+cd backend
+npm install
+
+# 2. Install Frontend Dependencies
+cd ../frontend
+npm install
 ```
 
-### 2. Set up the backend
+---
+
+## Environment Setup
+
+### 1. Backend Environment
+Copy the example environment file in `backend/`:
 
 ```bash
 cd backend
-cp .env.example .env          # Fill in your values
-npm install
-npm run prisma:generate       # Generate Prisma client
-npm run prisma:migrate        # Run DB migrations (Phase 2+)
-npm run start:dev             # http://localhost:5000
+cp .env.example .env
 ```
 
-### 3. Set up the frontend
+Configure your `.env` variables:
+```env
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/agency_os?schema=public"
+JWT_SECRET="super-secret-development-jwt-key"
+PORT=5000
+FRONTEND_URL="http://localhost:3000"
+```
+
+### 2. Frontend Environment
+Copy the example environment file in `frontend/`:
 
 ```bash
+cd frontend
+cp .env.example .env.local
+```
+
+Configure your `.env.local` variables:
+```env
+NEXT_PUBLIC_API_BASE_URL="http://localhost:5000/api"
+NEXT_PUBLIC_DEMO_AGENCY_ID="a0000000-0000-0000-0000-000000000001"
+```
+
+---
+
+## Database Migration & Seed Data
+
+Run the database migration and populate the initial workspace templates and stub agencies:
+
+```bash
+cd backend
+
+# Run pending migrations
+npx prisma migrate deploy
+
+# Seed stub agencies and 8 workspace templates
+npx prisma db seed
+```
+
+---
+
+## Running Backend
+
+Start the NestJS API server on `http://localhost:5000/api`:
+
+```bash
+cd backend
+npm run start:dev
+```
+
+* **Swagger API Documentation**: [http://localhost:5000/api/docs](http://localhost:5000/api/docs)
+
+---
+
+## Running Frontend
+
+Start the Next.js development server on `http://localhost:3000`:
+
+```bash
+cd frontend
+npm run dev
+```
+
+* **Smart Onboarding Wizard**: [http://localhost:3000/smart-onboarding](http://localhost:3000/smart-onboarding)
+* **Template Catalog View**: [http://localhost:3000/templates](http://localhost:3000/templates)
+
+---
+
+## Running Tests
+
+Execute the automated test suites covering unit logic, controllers, tenant isolation, DTO validation, and idempotency:
+
+```bash
+cd backend
+
+# Run all test suites
+npm run test
+
+# Run tests with code coverage
+npm run test:cov
+```
+
+---
+
+## Build for Production
+
+Compile both frontend and backend for production deployment:
+
+```bash
+# Build Backend
+cd backend
+npm run build
+
+# Build Frontend
 cd ../frontend
-cp ../.env.example .env.local # Fill in NEXT_PUBLIC_API_BASE_URL
-npm install
-npm run dev                   # http://localhost:3000
+npm run build
 ```
-
----
-
-## Environment Variables
-
-See [`backend/.env.example`](./backend/.env.example) for the full list.
-
-| Variable                  | Description                                   | Required |
-|---------------------------|-----------------------------------------------|----------|
-| `DATABASE_URL`            | PostgreSQL connection string                  | ✅       |
-| `JWT_SECRET`              | Secret key for signing JWT tokens             | ✅       |
-| `PORT`                    | NestJS server port (default: 5000)            | ✅       |
-| `FRONTEND_URL`            | Allowed CORS origin for the frontend          | ✅       |
-| `NEXT_PUBLIC_API_BASE_URL`| Public API base URL consumed by Next.js       | ✅       |
-
----
-
-## Database Setup
-
-```bash
-# In backend/
-npm run prisma:generate       # Regenerate client after schema changes
-npm run prisma:migrate        # Apply pending migrations (dev)
-npm run prisma:migrate:prod   # Apply pending migrations (production)
-npm run prisma:studio         # Open Prisma Studio GUI
-```
-
----
-
-## Running the Application
-
-```bash
-# Backend (NestJS) — port 5000
-cd backend && npm run start:dev
-
-# Frontend (Next.js) — port 3000
-cd frontend && npm run dev
-```
-
-Swagger UI: [http://localhost:5000/api/docs](http://localhost:5000/api/docs)
-
----
-
-## Testing
-
-```bash
-# Backend unit tests
-cd backend && npm run test
-
-# Backend unit tests with coverage
-cd backend && npm run test:cov
-
-# Backend e2e / integration tests
-cd backend && npm run test:e2e
-```
-
----
-
-## Phase Roadmap
-
-| Phase | Title                                 | Status      |
-|-------|---------------------------------------|-------------|
-| 1     | Project Scaffolding & Repo Setup      | ✅ Complete |
-| 2     | Data Models, DTOs & Core API          | ✅ Complete |
-| 3     | Onboarding Wizard UI                  | 🔜 Planned  |
-| 4     | Auth (JWT + RBAC)                     | 🔜 Planned  |
-| 5     | Testing (Unit + Integration)          | 🔜 Planned  |
-| 6     | Polish, Optimisation & Deployment     | 🔜 Planned  |
 
 ---
 
 ## API Documentation
 
-See [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md) for the full REST API reference.
-Auto-generated Swagger docs are available at `/api/docs` when the backend is running.
+For the full endpoint contract, request schemas, and stable error code definitions, see [`API_DOCUMENTATION.md`](./API_DOCUMENTATION.md).
 
 ---
 
-## Contributing
+## Technical Handover
 
-1. Branch from `main` using the convention: `feat/<feature-name>` or `fix/<issue>`
-2. Follow the TypeScript strict mode — no `any` types
-3. All new endpoints must have corresponding DTOs with `class-validator` decorators
-4. All new features must have unit + integration tests before merging
-5. Run `npm run lint` and `npm run type-check` before opening a PR
+For architectural decisions, recommendation algorithms, tenant isolation mechanisms, and integration guidelines for Neirah Tech, see [`TECHNICAL_HANDOVER.md`](./TECHNICAL_HANDOVER.md).

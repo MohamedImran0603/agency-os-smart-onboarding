@@ -1,13 +1,14 @@
-// ─── Smart Onboarding Module ───────────────────────────────────────────────────
-// Registers the controller and service for the smart-onboarding feature.
-// PrismaService is available via the global PrismaModule — no need to import it.
-
 import { Module } from '@nestjs/common';
+import { PrismaModule } from '../prisma/prisma.module';
 import { SmartOnboardingController } from './smart-onboarding.controller';
+import { TemplatesController } from './templates.controller';
 import { SmartOnboardingService } from './smart-onboarding.service';
+import { AgencyContextGuard } from '../common';
 
 @Module({
-  controllers: [SmartOnboardingController],
-  providers: [SmartOnboardingService],
+  imports: [PrismaModule],
+  controllers: [SmartOnboardingController, TemplatesController],
+  providers: [SmartOnboardingService, AgencyContextGuard],
+  exports: [SmartOnboardingService],
 })
 export class SmartOnboardingModule {}
