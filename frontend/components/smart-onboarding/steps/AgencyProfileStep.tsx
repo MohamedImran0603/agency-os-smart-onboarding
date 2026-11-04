@@ -3,6 +3,15 @@ import { Card } from '../../ui/Card';
 import { Button } from '../../ui/Button';
 import { Input } from '../../ui/Input';
 import { AgencyType } from '../../../lib/types/onboarding';
+import {
+  Building2,
+  Code2,
+  TrendingUp,
+  Layers,
+  ArrowLeft,
+  ArrowRight,
+  AlertCircle,
+} from 'lucide-react';
 
 export interface AgencyProfileStepProps {
   initialName?: string | undefined;
@@ -51,28 +60,28 @@ export const AgencyProfileStep: React.FC<AgencyProfileStepProps> = ({
     type: AgencyType;
     title: string;
     description: string;
-    icon: string;
+    IconComponent: React.ComponentType<{ className?: string }>;
     tag: string;
   }> = [
     {
       type: 'SOFTWARE_DEVELOPMENT',
       title: 'Software Development',
       description: 'Web & mobile applications, SaaS architectures, cloud APIs, and sprint engineering.',
-      icon: '💻',
+      IconComponent: Code2,
       tag: 'Agile & DevOps',
     },
     {
       type: 'DIGITAL_MARKETING',
       title: 'Digital Marketing',
       description: 'Performance advertising, SEO engines, creative branding, and campaign analytics.',
-      icon: '📈',
+      IconComponent: TrendingUp,
       tag: 'Growth & Creative',
     },
     {
       type: 'HYBRID',
       title: 'Hybrid / Full-Service',
       description: 'Unified delivery blending full-stack software development with growth retainers.',
-      icon: '🚀',
+      IconComponent: Layers,
       tag: 'End-to-End',
     },
   ];
@@ -80,8 +89,8 @@ export const AgencyProfileStep: React.FC<AgencyProfileStepProps> = ({
   return (
     <Card className="max-w-2xl mx-auto p-6 md:p-10 space-y-7 glass-panel border border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-3xl">
       <div>
-        <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
-          <span>🏢</span>
+        <div className="flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+          <Building2 className="w-4 h-4" />
           <span>Step 2 of 7</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-extrabold text-textPrimary tracking-tight">
@@ -95,7 +104,7 @@ export const AgencyProfileStep: React.FC<AgencyProfileStepProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6">
         {apiError && (
           <div className="p-3.5 bg-rose-50/90 border border-rose-200/80 text-error rounded-xl text-xs flex items-center space-x-2">
-            <span>⚠️</span>
+            <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{apiError}</span>
           </div>
         )}
@@ -123,6 +132,7 @@ export const AgencyProfileStep: React.FC<AgencyProfileStepProps> = ({
           <div className="grid grid-cols-1 gap-3">
             {agencyTypes.map((item) => {
               const isSelected = agencyType === item.type;
+              const Icon = item.IconComponent;
               return (
                 <div
                   key={item.type}
@@ -134,13 +144,13 @@ export const AgencyProfileStep: React.FC<AgencyProfileStepProps> = ({
                   }`}
                 >
                   <div
-                    className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 transition-transform ${
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
                       isSelected
                         ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-                        : 'bg-white border border-slate-200 text-textPrimary shadow-2xs'
+                        : 'bg-white border border-slate-200 text-primary shadow-2xs'
                     }`}
                   >
-                    {item.icon}
+                    <Icon className="w-5 h-5" />
                   </div>
 
                   <div className="flex-1 min-w-0">
@@ -175,10 +185,12 @@ export const AgencyProfileStep: React.FC<AgencyProfileStepProps> = ({
         {/* Navigation Buttons */}
         <div className="flex items-center justify-between pt-4 border-t border-slate-200/70">
           <Button type="button" variant="secondary" onClick={onBack}>
-            ← Back
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            <span>Back</span>
           </Button>
           <Button type="submit" loading={isSubmitting} className="shadow-md shadow-blue-500/25">
-            Save & Continue ➔
+            <span>Save & Continue</span>
+            <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
       </form>

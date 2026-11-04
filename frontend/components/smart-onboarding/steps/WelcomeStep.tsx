@@ -2,6 +2,15 @@ import React from 'react';
 import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
 import { Badge } from '../../ui/Badge';
+import {
+  Sparkles,
+  Zap,
+  CheckCircle2,
+  Building2,
+  Boxes,
+  Cpu,
+  ArrowRight,
+} from 'lucide-react';
 
 export interface WelcomeStepProps {
   onStart: () => void;
@@ -18,16 +27,18 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
     <Card className="max-w-3xl mx-auto text-center p-8 md:p-12 space-y-8 glass-panel border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-3xl">
       {/* Hero Badge & Icon */}
       <div className="flex flex-col items-center space-y-3">
-        <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white flex items-center justify-center text-3xl shadow-xl shadow-blue-500/25 ring-8 ring-blue-500/10">
-          🚀
+        <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 text-white flex items-center justify-center shadow-xl shadow-blue-500/25 ring-8 ring-blue-500/10">
+          <Sparkles className="w-9 h-9 fill-white/20 text-white" />
         </div>
 
         <div className="flex items-center justify-center gap-2 pt-2">
-          <Badge variant="default" className="gap-1 px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200/80">
-            ✨ Smart Onboarding
+          <Badge variant="default" className="gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200/80">
+            <Zap className="w-3.5 h-3.5" />
+            <span>Smart Onboarding</span>
           </Badge>
-          <Badge variant="success" className="gap-1 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-            ⚡ 7 Guided Steps
+          <Badge variant="success" className="gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>7 Guided Steps</span>
           </Badge>
         </div>
       </div>
@@ -42,11 +53,11 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
         </p>
       </div>
 
-      {/* 3 Step Highlights with Emojis & Glass finish */}
+      {/* 3 Step Highlights with Standard Vector Icons & Glass finish */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-left py-2">
-        <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2">
-          <div className="w-8 h-8 rounded-xl bg-blue-100/80 text-blue-700 flex items-center justify-center text-sm font-bold shadow-2xs">
-            🏢
+        <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2.5">
+          <div className="w-9 h-9 rounded-xl bg-blue-100/90 text-blue-700 flex items-center justify-center shadow-2xs">
+            <Building2 className="w-5 h-5" />
           </div>
           <div>
             <span className="text-xs font-bold text-textPrimary block">01 · Archetype</span>
@@ -56,9 +67,9 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2">
-          <div className="w-8 h-8 rounded-xl bg-purple-100/80 text-purple-700 flex items-center justify-center text-sm font-bold shadow-2xs">
-            📦
+        <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2.5">
+          <div className="w-9 h-9 rounded-xl bg-indigo-100/90 text-indigo-700 flex items-center justify-center shadow-2xs">
+            <Boxes className="w-5 h-5" />
           </div>
           <div>
             <span className="text-xs font-bold text-textPrimary block">02 · Templates</span>
@@ -68,9 +79,9 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2">
-          <div className="w-8 h-8 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center text-sm font-bold shadow-2xs">
-            ⚡
+        <div className="p-4 rounded-2xl glass-card border border-white/80 space-y-2.5">
+          <div className="w-9 h-9 rounded-xl bg-emerald-100/90 text-emerald-700 flex items-center justify-center shadow-2xs">
+            <Cpu className="w-5 h-5" />
           </div>
           <div>
             <span className="text-xs font-bold text-textPrimary block">03 · Provision</span>
@@ -88,7 +99,8 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
           onClick={onStart}
           className="w-full sm:w-auto px-10 py-3.5 text-base shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35"
         >
-          {isContinuing && currentStep > 1 ? `Continue Setup (Step ${currentStep}) ➔` : 'Get Started Now ➔'}
+          <span>{isContinuing && currentStep > 1 ? `Continue Setup (Step ${currentStep})` : 'Get Started Now'}</span>
+          <ArrowRight className="w-4 h-4 ml-1.5" />
         </Button>
       </div>
     </Card>

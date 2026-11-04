@@ -1,8 +1,17 @@
 import React from 'react';
+import {
+  Sparkles,
+  Building2,
+  Wrench,
+  Boxes,
+  Eye,
+  ShieldCheck,
+  CheckCircle2,
+  Check,
+} from 'lucide-react';
 
 export interface StepItem {
   label: string;
-  emoji?: string;
 }
 
 export interface StepperProps {
@@ -11,19 +20,29 @@ export interface StepperProps {
   className?: string;
 }
 
-const STEP_EMOJIS = ['🚀', '🏢', '🛠️', '📦', '👁️', '🔒', '🎉'];
+const STEP_ICONS = [
+  Sparkles,
+  Building2,
+  Wrench,
+  Boxes,
+  Eye,
+  ShieldCheck,
+  CheckCircle2,
+];
 
 export const Stepper: React.FC<StepperProps> = ({
   steps,
   currentStep,
   className = '',
 }) => {
+  const CurrentIcon = STEP_ICONS[currentStep - 1] || Sparkles;
+
   return (
     <div className={`w-full ${className}`}>
       {/* ── Mobile view ── */}
       <div className="md:hidden flex items-center justify-between glass-panel px-4 py-3 rounded-2xl mb-6 shadow-sm border border-white/80">
         <div className="flex items-center space-x-2">
-          <span className="text-base">{STEP_EMOJIS[currentStep - 1] || '✨'}</span>
+          <CurrentIcon className="w-4 h-4 text-primary" />
           <span className="text-xs font-bold text-primary uppercase tracking-wider">
             Step {currentStep} of {steps.length}
           </span>
@@ -45,7 +64,7 @@ export const Stepper: React.FC<StepperProps> = ({
           const stepNumber = index + 1;
           const isCompleted = stepNumber < currentStep;
           const isActive = stepNumber === currentStep;
-          const emoji = step.emoji || STEP_EMOJIS[index] || '✨';
+          const StepIcon = STEP_ICONS[index] || Sparkles;
 
           return (
             <React.Fragment key={step.label}>
@@ -56,27 +75,13 @@ export const Stepper: React.FC<StepperProps> = ({
                       ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 scale-95'
                       : isActive
                       ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-500/20 scale-105'
-                      : 'bg-white/80 text-textSecondary border border-slate-200 shadow-2xs hover:border-slate-300'
+                      : 'bg-white/90 text-textSecondary border border-slate-200 shadow-2xs hover:border-slate-300'
                   }`}
                 >
                   {isCompleted ? (
-                    <svg
-                      className="w-4 h-4"
-                      width="16"
-                      height="16"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="3"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                    <Check className="w-4 h-4 stroke-[3]" />
                   ) : (
-                    <span>{emoji}</span>
+                    <StepIcon className="w-4 h-4" />
                   )}
                 </div>
 
@@ -95,7 +100,7 @@ export const Stepper: React.FC<StepperProps> = ({
 
               {/* Connecting line */}
               {index < steps.length - 1 && (
-                <div className="flex-1 mx-3 h-1 bg-slate-100 rounded-full overflow-hidden self-center mb-5">
+                <div className="flex-1 mx-3 h-1 bg-slate-200/70 rounded-full overflow-hidden self-center mb-5">
                   <div
                     className={`h-full transition-all duration-300 rounded-full ${
                       stepNumber < currentStep

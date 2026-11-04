@@ -6,6 +6,13 @@ import { TemplateCard } from '../TemplateCard';
 import { WorkspaceTemplate, AgencyType } from '../../../lib/types/onboarding';
 import { getRecommendedTemplates } from '../../../lib/api/onboarding';
 import { FALLBACK_TEMPLATES } from '../../../lib/constants/fallback-data';
+import {
+  Boxes,
+  Sparkles,
+  ArrowLeft,
+  ArrowRight,
+  AlertCircle,
+} from 'lucide-react';
 
 export interface TemplateRecommendationsStepProps {
   agencyType: AgencyType;
@@ -92,8 +99,8 @@ export const TemplateRecommendationsStep: React.FC<TemplateRecommendationsStepPr
     <Card className="max-w-4xl mx-auto p-6 md:p-10 space-y-7 glass-panel border border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-3xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-slate-200/60">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
-            <span>📦</span>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+            <Boxes className="w-4 h-4" />
             <span>Step 4 of 7</span>
           </div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-textPrimary tracking-tight">
@@ -105,15 +112,16 @@ export const TemplateRecommendationsStep: React.FC<TemplateRecommendationsStepPr
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant={selectedIds.length > 0 ? 'success' : 'default'} className="px-3 py-1 font-bold">
-            ✨ {selectedIds.length} Selected
+          <Badge variant={selectedIds.length > 0 ? 'success' : 'default'} className="px-3 py-1 font-bold gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{selectedIds.length} Selected</span>
           </Badge>
         </div>
       </div>
 
       {error && (
         <div className="p-3.5 bg-rose-50/90 border border-rose-200/80 text-error rounded-xl text-xs flex items-center space-x-2">
-          <span>⚠️</span>
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -148,10 +156,12 @@ export const TemplateRecommendationsStep: React.FC<TemplateRecommendationsStepPr
 
       <div className="flex items-center justify-between pt-4 border-t border-slate-200/70">
         <Button variant="secondary" onClick={onBack}>
-          ← Back
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          <span>Back</span>
         </Button>
         <Button onClick={handleNext} loading={isSubmitting} className="shadow-md shadow-blue-500/25">
-          Generate Workspace Preview ➔
+          <span>Generate Workspace Preview</span>
+          <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
     </Card>

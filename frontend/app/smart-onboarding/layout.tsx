@@ -2,6 +2,18 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import {
+  Zap,
+  BookOpen,
+  Workflow,
+  Boxes,
+  Kanban,
+  FolderGit2,
+  TrendingUp,
+  ShieldCheck,
+  HelpCircle,
+  Menu,
+} from 'lucide-react';
 
 export default function SmartOnboardingLayout({
   children,
@@ -20,14 +32,12 @@ export default function SmartOnboardingLayout({
             className="md:hidden p-2 rounded-xl text-textSecondary hover:bg-white/80 border border-transparent hover:border-slate-200 transition-colors"
             aria-label="Toggle menu"
           >
-            <svg className="w-5 h-5" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <Menu className="w-5 h-5" />
           </button>
 
           <Link href="/smart-onboarding" className="flex items-center space-x-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform">
-              ⚡
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-blue-500/25 group-hover:scale-105 transition-transform">
+              <Zap className="w-5 h-5 fill-white text-white" />
             </div>
             <div className="flex flex-col">
               <span className="font-extrabold text-lg text-textPrimary tracking-tight leading-none flex items-center gap-1.5">
@@ -43,14 +53,14 @@ export default function SmartOnboardingLayout({
             href="/templates"
             className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primaryDark px-3.5 py-2 rounded-xl glass-panel hover:bg-white transition-all shadow-2xs hover:shadow-sm"
           >
-            <span>📋</span>
+            <BookOpen className="w-4 h-4" />
             <span>Template Catalog</span>
           </Link>
 
           {/* User Profile Card */}
           <div className="flex items-center space-x-2.5 pl-3 border-l border-slate-200/80">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 border border-white/60 flex items-center justify-center text-xs font-bold text-white shadow-sm">
-              ✨ NT
+              NT
             </div>
             <div className="hidden lg:block text-left">
               <p className="text-xs font-bold text-textPrimary leading-none flex items-center gap-1">
@@ -73,7 +83,7 @@ export default function SmartOnboardingLayout({
           <div>
             <p className="text-[11px] font-bold text-textSecondary/80 uppercase tracking-wider px-3 mb-2 flex items-center justify-between">
               <span>Onboarding</span>
-              <span className="text-xs">🚀</span>
+              <Zap className="w-3.5 h-3.5 text-primary" />
             </p>
             <nav className="space-y-1">
               <Link
@@ -81,7 +91,7 @@ export default function SmartOnboardingLayout({
                 onClick={() => setSidebarOpen(false)}
                 className="flex items-center space-x-3 px-3.5 py-2.5 text-sm font-bold rounded-xl bg-blue-50/90 text-primary border border-blue-200/60 shadow-xs"
               >
-                <span>⚡</span>
+                <Workflow className="w-4 h-4 text-primary" />
                 <span>Guided Wizard</span>
               </Link>
 
@@ -90,7 +100,7 @@ export default function SmartOnboardingLayout({
                 onClick={() => setSidebarOpen(false)}
                 className="flex items-center space-x-3 px-3.5 py-2.5 text-sm font-medium rounded-xl text-textSecondary hover:bg-white/80 hover:text-textPrimary transition-all"
               >
-                <span>📦</span>
+                <Boxes className="w-4 h-4" />
                 <span>Template Library</span>
               </Link>
             </nav>
@@ -102,19 +112,19 @@ export default function SmartOnboardingLayout({
             </p>
             <nav className="space-y-1 text-sm text-textSecondary/60 select-none">
               <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
-                <span>📊</span>
+                <Kanban className="w-4 h-4" />
                 <span>Pipelines & Sprints</span>
               </div>
               <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
-                <span>📁</span>
+                <FolderGit2 className="w-4 h-4" />
                 <span>Client Projects</span>
               </div>
               <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
-                <span>📈</span>
+                <TrendingUp className="w-4 h-4" />
                 <span>Campaign Hub</span>
               </div>
               <div className="flex items-center space-x-3 px-3 py-2 rounded-xl cursor-not-allowed hover:bg-slate-50/50">
-                <span>⚙️</span>
+                <ShieldCheck className="w-4 h-4" />
                 <span>Tenant Isolation</span>
               </div>
             </nav>
@@ -123,7 +133,7 @@ export default function SmartOnboardingLayout({
           {/* Quick Help Card */}
           <div className="p-3.5 rounded-xl bg-gradient-to-br from-blue-50/70 to-indigo-50/70 border border-blue-100/60 text-xs text-textSecondary space-y-1.5">
             <div className="flex items-center gap-1.5 font-bold text-textPrimary">
-              <span>💡</span>
+              <HelpCircle className="w-4 h-4 text-primary" />
               <span>Need Assistance?</span>
             </div>
             <p className="text-[11px] leading-relaxed">

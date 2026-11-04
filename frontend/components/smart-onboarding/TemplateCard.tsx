@@ -1,5 +1,20 @@
 import React from 'react';
 import { Badge } from '../ui/Badge';
+import {
+  Code2,
+  Cloud,
+  Shield,
+  Target,
+  Search,
+  Palette,
+  Layers,
+  Users,
+  Boxes,
+  GitBranch,
+  ListChecks,
+  Sparkles,
+  Check,
+} from 'lucide-react';
 
 export interface TemplateCardProps {
   id?: string;
@@ -13,15 +28,15 @@ export interface TemplateCardProps {
   taskCount?: number;
 }
 
-const CATEGORY_EMOJIS: Record<string, string> = {
-  SOFTWARE_PIPELINE: '💻',
-  SOFTWARE_SAAS: '☁️',
-  SOFTWARE_MAINTENANCE: '🛡️',
-  MARKETING_PAID_MEDIA: '🎯',
-  MARKETING_SEO: '🔍',
-  MARKETING_BRANDING: '🎨',
-  HYBRID_OPERATIONS: '🚀',
-  HYBRID_COLLABORATION: '🤝',
+const CATEGORY_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  SOFTWARE_PIPELINE: Code2,
+  SOFTWARE_SAAS: Cloud,
+  SOFTWARE_MAINTENANCE: Shield,
+  MARKETING_PAID_MEDIA: Target,
+  MARKETING_SEO: Search,
+  MARKETING_BRANDING: Palette,
+  HYBRID_OPERATIONS: Layers,
+  HYBRID_COLLABORATION: Users,
 };
 
 export const TemplateCard: React.FC<TemplateCardProps> = ({
@@ -34,7 +49,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
   pipelineStagesCount,
   taskCount,
 }) => {
-  const emoji = CATEGORY_EMOJIS[category] || '📦';
+  const CategoryIcon = CATEGORY_ICON_MAP[category] || Boxes;
 
   return (
     <div
@@ -48,7 +63,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
       <div>
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-1.5">
-            <span className="text-sm">{emoji}</span>
+            <CategoryIcon className="w-4 h-4 text-primary" />
             <Badge variant="default" className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-0.5 bg-slate-100/90 text-textSecondary border border-slate-200">
               {category.replace(/_/g, ' ')}
             </Badge>
@@ -58,14 +73,10 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
             className={`w-5 h-5 rounded-lg flex items-center justify-center border transition-all ${
               selected
                 ? 'bg-primary border-primary text-white shadow-xs'
-                : 'border-slate-300 bg-white/80'
+                : 'border-slate-300 bg-white/90'
             }`}
           >
-            {selected && (
-              <svg className="w-3.5 h-3.5" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-              </svg>
-            )}
+            {selected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
           </div>
         </div>
 
@@ -78,19 +89,19 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
 
         {whyRecommended && (
           <div className="mt-3 py-1.5 px-2.5 rounded-xl bg-blue-50/80 border border-blue-200/60 text-[11px] text-blue-800 flex items-center gap-1.5">
-            <span>✨</span>
+            <Sparkles className="w-3.5 h-3.5 text-primary shrink-0" />
             <span className="font-medium truncate">{whyRecommended}</span>
           </div>
         )}
       </div>
 
       <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between text-[11px] text-textSecondary font-medium">
-        <span className="flex items-center gap-1">
-          <span>📊</span>
+        <span className="flex items-center gap-1.5">
+          <GitBranch className="w-3.5 h-3.5 text-primary" />
           <span>{pipelineStagesCount || 5} Stages</span>
         </span>
-        <span className="flex items-center gap-1">
-          <span>📋</span>
+        <span className="flex items-center gap-1.5">
+          <ListChecks className="w-3.5 h-3.5 text-primary" />
           <span>{taskCount || 10} Checklists</span>
         </span>
       </div>

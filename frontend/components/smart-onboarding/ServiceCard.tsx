@@ -1,26 +1,39 @@
 import React from 'react';
+import {
+  Globe,
+  Smartphone,
+  Cloud,
+  Cpu,
+  ShieldCheck,
+  Search,
+  Target,
+  Palette,
+  Share2,
+  Mail,
+  Check,
+  CheckSquare,
+} from 'lucide-react';
 
 export interface ServiceCardProps {
   label: string;
   selected: boolean;
   onClick: () => void;
   description?: string;
-  icon?: string;
 }
 
-const SERVICE_EMOJIS: Record<string, string> = {
-  'Web Application Development': '💻',
-  'Mobile App Engineering': '📱',
-  'SaaS Platform Development': '☁️',
-  'DevOps & Cloud Infrastructure': '⚙️',
-  'QA & Test Automation': '🧪',
-  'Search Engine Optimization (SEO)': '🔍',
-  'Paid Advertising (PPC & Meta)': '🎯',
-  'Brand Strategy & Identity': '🎨',
-  'Social Media Management': '📣',
-  'Email & Lifecycle Marketing': '📧',
-  'Custom Software Development': '💻',
-  'Full-Service Growth Retainer': '🚀',
+const SERVICE_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  'Web Application Development': Globe,
+  'Mobile App Engineering': Smartphone,
+  'SaaS Platform Development': Cloud,
+  'DevOps & Cloud Infrastructure': Cpu,
+  'QA & Test Automation': ShieldCheck,
+  'Search Engine Optimization (SEO)': Search,
+  'Paid Advertising (PPC & Meta)': Target,
+  'Brand Strategy & Identity': Palette,
+  'Social Media Management': Share2,
+  'Email & Lifecycle Marketing': Mail,
+  'Custom Software Development': Globe,
+  'Full-Service Growth Retainer': CheckSquare,
 };
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({
@@ -28,9 +41,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
   selected,
   onClick,
   description,
-  icon,
 }) => {
-  const emoji = icon || SERVICE_EMOJIS[label] || '⚡';
+  const IconComponent = SERVICE_ICON_MAP[label] || CheckSquare;
 
   return (
     <div
@@ -42,13 +54,13 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
       }`}
     >
       <div
-        className={`w-9 h-9 rounded-xl flex items-center justify-center text-base shrink-0 transition-all ${
+        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-all ${
           selected
             ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105'
-            : 'bg-white border border-slate-200 text-textPrimary shadow-2xs'
+            : 'bg-white border border-slate-200 text-primary shadow-2xs'
         }`}
       >
-        <span>{emoji}</span>
+        <IconComponent className="w-5 h-5" />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -60,14 +72,10 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
             className={`w-5 h-5 rounded-lg flex items-center justify-center border transition-all ${
               selected
                 ? 'bg-primary border-primary text-white shadow-xs'
-                : 'border-slate-300 bg-white/80'
+                : 'border-slate-300 bg-white/90'
             }`}
           >
-            {selected && (
-              <svg className="w-3.5 h-3.5" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-              </svg>
-            )}
+            {selected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
           </div>
         </div>
         {description && (

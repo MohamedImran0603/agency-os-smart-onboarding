@@ -4,6 +4,15 @@ import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { ServiceCard } from '../ServiceCard';
 import { AgencyType } from '../../../lib/types/onboarding';
+import {
+  Wrench,
+  Sparkles,
+  Code2,
+  TrendingUp,
+  ArrowLeft,
+  ArrowRight,
+  AlertCircle,
+} from 'lucide-react';
 
 export interface ServicesSelectionStepProps {
   agencyType: AgencyType;
@@ -23,19 +32,19 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const softwareServices = [
-    { label: 'Web Application Development', desc: 'Custom frontend and full-stack web applications', icon: '💻' },
-    { label: 'Mobile App Engineering', desc: 'Native and cross-platform iOS & Android apps', icon: '📱' },
-    { label: 'SaaS Platform Development', desc: 'Multi-tenant cloud architectures, APIs, and billing', icon: '☁️' },
-    { label: 'DevOps & Cloud Infrastructure', desc: 'CI/CD deployment pipelines, AWS, Docker, and Kubernetes', icon: '⚙️' },
-    { label: 'QA & Test Automation', desc: 'End-to-end testing suites, regression, and code audits', icon: '🧪' },
+    { label: 'Web Application Development', desc: 'Custom frontend and full-stack web applications' },
+    { label: 'Mobile App Engineering', desc: 'Native and cross-platform iOS & Android apps' },
+    { label: 'SaaS Platform Development', desc: 'Multi-tenant cloud architectures, APIs, and billing' },
+    { label: 'DevOps & Cloud Infrastructure', desc: 'CI/CD deployment pipelines, AWS, Docker, and Kubernetes' },
+    { label: 'QA & Test Automation', desc: 'End-to-end testing suites, regression, and code audits' },
   ];
 
   const marketingServices = [
-    { label: 'Search Engine Optimization (SEO)', desc: 'Technical audits, keyword clusters, and organic rankings', icon: '🔍' },
-    { label: 'Paid Advertising (PPC & Meta)', desc: 'Performance ad campaigns on Google, Meta, and LinkedIn', icon: '🎯' },
-    { label: 'Brand Strategy & Identity', desc: 'Design systems, vector guidelines, and brand collateral', icon: '🎨' },
-    { label: 'Social Media Management', desc: 'Community growth, creative campaigns, and content calendars', icon: '📣' },
-    { label: 'Email & Lifecycle Marketing', desc: 'Customer retention funnels, drip flows, and newsletter automation', icon: '📧' },
+    { label: 'Search Engine Optimization (SEO)', desc: 'Technical audits, keyword clusters, and organic rankings' },
+    { label: 'Paid Advertising (PPC & Meta)', desc: 'Performance ad campaigns on Google, Meta, and LinkedIn' },
+    { label: 'Brand Strategy & Identity', desc: 'Design systems, vector guidelines, and brand collateral' },
+    { label: 'Social Media Management', desc: 'Community growth, creative campaigns, and content calendars' },
+    { label: 'Email & Lifecycle Marketing', desc: 'Customer retention funnels, drip flows, and newsletter automation' },
   ];
 
   const toggleService = (name: string) => {
@@ -69,8 +78,8 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
     <Card className="max-w-4xl mx-auto p-6 md:p-10 space-y-7 glass-panel border border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-3xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-slate-200/60">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
-            <span>🛠️</span>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+            <Wrench className="w-4 h-4" />
             <span>Step 3 of 7</span>
           </div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-textPrimary tracking-tight">
@@ -82,15 +91,16 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant={selectedServices.length > 0 ? 'success' : 'default'} className="px-3 py-1 font-bold">
-            ✨ {selectedServices.length} Selected
+          <Badge variant={selectedServices.length > 0 ? 'success' : 'default'} className="px-3 py-1 font-bold gap-1.5">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{selectedServices.length} Selected</span>
           </Badge>
         </div>
       </div>
 
       {error && (
         <div className="p-3.5 bg-rose-50/90 border border-rose-200/80 text-error rounded-xl text-xs flex items-center space-x-2">
-          <span>⚠️</span>
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -99,7 +109,7 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
         {showSoftware && (
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
-              <span className="text-base">💻</span>
+              <Code2 className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-textPrimary uppercase tracking-wider">
                 Software Engineering Deliverables
               </h3>
@@ -110,7 +120,6 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
                   key={s.label}
                   label={s.label}
                   description={s.desc}
-                  icon={s.icon}
                   selected={selectedServices.includes(s.label)}
                   onClick={() => toggleService(s.label)}
                 />
@@ -122,7 +131,7 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
         {showMarketing && (
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
-              <span className="text-base">📈</span>
+              <TrendingUp className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-textPrimary uppercase tracking-wider">
                 Marketing & Creative Deliverables
               </h3>
@@ -133,7 +142,6 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
                   key={s.label}
                   label={s.label}
                   description={s.desc}
-                  icon={s.icon}
                   selected={selectedServices.includes(s.label)}
                   onClick={() => toggleService(s.label)}
                 />
@@ -145,10 +153,12 @@ export const ServicesSelectionStep: React.FC<ServicesSelectionStepProps> = ({
 
       <div className="flex items-center justify-between pt-4 border-t border-slate-200/70">
         <Button variant="secondary" onClick={onBack}>
-          ← Back
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          <span>Back</span>
         </Button>
         <Button onClick={handleNext} loading={isSubmitting} className="shadow-md shadow-blue-500/25">
-          Save & Choose Templates ➔
+          <span>Save & Choose Templates</span>
+          <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
     </Card>

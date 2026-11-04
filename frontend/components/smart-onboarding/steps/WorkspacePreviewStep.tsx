@@ -6,6 +6,19 @@ import { Input } from '../../ui/Input';
 import { WorkspacePreviewData } from '../../../lib/types/onboarding';
 import { generatePreview } from '../../../lib/api/onboarding';
 import { FALLBACK_PREVIEW } from '../../../lib/constants/fallback-data';
+import {
+  Eye,
+  GitBranch,
+  Users,
+  Activity,
+  Edit3,
+  Lock,
+  ArrowLeft,
+  ArrowRight,
+  AlertCircle,
+  User,
+  CheckCircle2,
+} from 'lucide-react';
 
 export interface WorkspacePreviewStepProps {
   onNext: () => void;
@@ -71,8 +84,8 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
     <Card className="max-w-4xl mx-auto p-6 md:p-10 space-y-7 glass-panel border border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.04)] rounded-3xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-slate-200/60">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider mb-1">
-            <span>👁️</span>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-primary uppercase tracking-wider mb-1">
+            <Eye className="w-4 h-4" />
             <span>Step 5 of 7</span>
           </div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-textPrimary tracking-tight">
@@ -84,15 +97,16 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge variant="default" className="gap-1 font-bold">
-            🔒 Read-Only Preview
+          <Badge variant="default" className="gap-1.5 font-bold">
+            <Lock className="w-3.5 h-3.5 text-textSecondary" />
+            <span>Read-Only Preview</span>
           </Badge>
         </div>
       </div>
 
       {error && (
         <div className="p-3.5 bg-rose-50/90 border border-rose-200/80 text-error rounded-xl text-xs flex items-center space-x-2">
-          <span>⚠️</span>
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
@@ -114,7 +128,7 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-textPrimary uppercase tracking-wider flex items-center gap-2">
-                  <span>📊</span>
+                  <GitBranch className="w-4 h-4 text-primary" />
                   <span>Pipeline & Stage Boards ({preview.pipelines.length})</span>
                 </h3>
                 <span className="text-xs text-textSecondary font-medium">Click name to rename</span>
@@ -149,9 +163,7 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
                           <h4 className="text-sm font-bold text-textPrimary group-hover:text-primary transition-colors">
                             {pipe.name}
                           </h4>
-                          <span className="text-xs text-textSecondary opacity-0 group-hover:opacity-100 transition-opacity">
-                            ✏️
-                          </span>
+                          <Edit3 className="w-3.5 h-3.5 text-textSecondary opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                       )}
                       <span className="text-[11px] font-semibold text-textSecondary px-2 py-0.5 rounded-full bg-slate-100">
@@ -187,7 +199,7 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
           {preview?.projectTemplates && preview.projectTemplates.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-sm font-bold text-textPrimary uppercase tracking-wider flex items-center gap-2">
-                <span>👥</span>
+                <Users className="w-4 h-4 text-primary" />
                 <span>Project Architecture & Default Roles</span>
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -208,7 +220,7 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
                           key={rIdx}
                           className="text-[11px] font-medium px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex items-center gap-1"
                         >
-                          <span>👤</span>
+                          <User className="w-3 h-3 text-blue-500" />
                           <span>{role}</span>
                         </span>
                       ))}
@@ -223,7 +235,7 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
           {preview?.marketingWorkflows && preview.marketingWorkflows.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-sm font-bold text-textPrimary uppercase tracking-wider flex items-center gap-2">
-                <span>⚡</span>
+                <Activity className="w-4 h-4 text-emerald-600" />
                 <span>Marketing & Growth Automations</span>
               </h3>
               <div className="space-y-2">
@@ -233,11 +245,12 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
                     className="p-3.5 rounded-2xl glass-card border border-white/80 flex items-center justify-between"
                   >
                     <div className="flex items-center space-x-2.5">
-                      <span className="text-base">🚀</span>
+                      <Activity className="w-4 h-4 text-emerald-600" />
                       <span className="text-xs font-bold text-textPrimary">{flow.name}</span>
                     </div>
-                    <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                      ✓ Active Growth Loop
+                    <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      <span>Active Growth Loop</span>
                     </span>
                   </div>
                 ))}
@@ -249,10 +262,12 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
 
       <div className="flex items-center justify-between pt-4 border-t border-slate-200/70">
         <Button variant="secondary" onClick={onBack}>
-          ← Back
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          <span>Back</span>
         </Button>
         <Button onClick={onNext} className="shadow-md shadow-blue-500/25">
-          Proceed to Final Review ➔
+          <span>Proceed to Final Review</span>
+          <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
     </Card>
