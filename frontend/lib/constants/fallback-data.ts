@@ -1,5 +1,12 @@
 import { WorkspaceTemplate, WorkspacePreviewData } from '../types/onboarding';
 
+const makeStages = (labels: string[]) =>
+  labels.map((label, i) => ({
+    id: `stage-${i + 1}`,
+    label,
+    color: ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#6366F1'][i % 6] || '#3B82F6',
+  }));
+
 export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
   {
     id: 't0000000-0000-0000-0000-000000000001',
@@ -10,11 +17,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Backlog', 'Design Spec', 'In Development', 'Code Review', 'QA Testing', 'Production Release'] },
+      pipeline: {
+        name: 'Web Application Pipeline',
+        stages: makeStages(['Backlog', 'Design Spec', 'In Development', 'Code Review', 'QA Testing', 'Production Release']),
+      },
       defaultRoles: ['Lead Architect', 'Frontend Engineer', 'Backend Engineer'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
   {
     id: 't0000000-0000-0000-0000-000000000002',
@@ -25,11 +33,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Architecture Planning', 'Auth & Multi-Tenancy', 'Core Modules', 'Billing Integration', 'Security Review', 'GA Launch'] },
+      pipeline: {
+        name: 'SaaS Engine Pipeline',
+        stages: makeStages(['Architecture Planning', 'Auth & Multi-Tenancy', 'Core Modules', 'Billing Integration', 'Security Review', 'GA Launch']),
+      },
       defaultRoles: ['Tech Lead', 'Security Specialist', 'Full-Stack Developer'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
   {
     id: 't0000000-0000-0000-0000-000000000003',
@@ -40,11 +49,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Triage', 'Investigation', 'Patching', 'Staging Verification', 'Deploy & Verify'] },
+      pipeline: {
+        name: 'Maintenance Pipeline',
+        stages: makeStages(['Triage', 'Investigation', 'Patching', 'Staging Verification', 'Deploy & Verify']),
+      },
       defaultRoles: ['Support Engineer', 'Site Reliability Engineer'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
   {
     id: 't0000000-0000-0000-0000-000000000004',
@@ -55,11 +65,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Audience Research', 'Creative Production', 'Ad Setup', 'A/B Testing', 'Scaling Phase', 'Bi-Weekly Reporting'] },
+      pipeline: {
+        name: 'Paid Ads Pipeline',
+        stages: makeStages(['Audience Research', 'Creative Production', 'Ad Setup', 'A/B Testing', 'Scaling Phase', 'Bi-Weekly Reporting']),
+      },
       defaultRoles: ['Media Buyer', 'Copywriter', 'Creative Strategist', 'Analytics Lead'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
   {
     id: 't0000000-0000-0000-0000-000000000005',
@@ -70,11 +81,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Technical Audit', 'Keyword Strategy', 'Content Briefs', 'Drafting & Review', 'On-Page Optimization', 'Backlink Outreach'] },
+      pipeline: {
+        name: 'SEO Pipeline',
+        stages: makeStages(['Technical Audit', 'Keyword Strategy', 'Content Briefs', 'Drafting & Review', 'On-Page Optimization', 'Backlink Outreach']),
+      },
       defaultRoles: ['SEO Strategist', 'Content Writer', 'Technical SEO Lead'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
   {
     id: 't0000000-0000-0000-0000-000000000006',
@@ -85,11 +97,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Brand Discovery', 'Moodboards', 'Logo Explorations', 'Typography & Palette', 'Design System Kit', 'Brand Guide Handover'] },
+      pipeline: {
+        name: 'Branding Pipeline',
+        stages: makeStages(['Brand Discovery', 'Moodboards', 'Logo Explorations', 'Typography & Palette', 'Design System Kit', 'Brand Guide Handover']),
+      },
       defaultRoles: ['Creative Director', 'Brand Designer', 'Art Director'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
   {
     id: 't0000000-0000-0000-0000-000000000007',
@@ -100,11 +113,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Client Discovery', 'Quarterly Roadmap', 'Sprint Execution', 'Deliverable Review', 'Monthly Business Review'] },
+      pipeline: {
+        name: 'Growth Retainer Pipeline',
+        stages: makeStages(['Client Discovery', 'Quarterly Roadmap', 'Sprint Execution', 'Deliverable Review', 'Monthly Business Review']),
+      },
       defaultRoles: ['Account Director', 'Technical Lead', 'Growth Strategist'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
   {
     id: 't0000000-0000-0000-0000-000000000008',
@@ -115,11 +129,12 @@ export const FALLBACK_TEMPLATES: WorkspaceTemplate[] = [
     version: 1,
     isActive: true,
     configurationData: {
-      pipeline: { stages: ['Portal Setup', 'Asset Library', 'Weekly Updates', 'Approval Gateways', 'Quarterly Review'] },
+      pipeline: {
+        name: 'Client Portal Pipeline',
+        stages: makeStages(['Portal Setup', 'Asset Library', 'Weekly Updates', 'Approval Gateways', 'Quarterly Review']),
+      },
       defaultRoles: ['Engagement Lead', 'Client Success Manager', 'Delivery Director'],
     },
-    createdAt: '2026-11-04T00:00:00.000Z',
-    updatedAt: '2026-11-04T00:00:00.000Z',
   },
 ];
 
@@ -128,20 +143,27 @@ export const FALLBACK_PREVIEW: WorkspacePreviewData = {
   agencyType: 'HYBRID',
   selectedServices: ['Web Development', 'Paid Advertising', 'Full-Service Retainer'],
   preview: {
+    totalPipelines: 3,
+    totalTaskChecklists: 0,
+    totalProjectTemplates: 2,
     pipelines: [
       {
         name: 'Web Application Delivery Pipeline',
-        stages: ['Backlog', 'Design Spec', 'In Development', 'Code Review', 'QA Testing', 'Production Release'],
+        stages: makeStages(['Backlog', 'Design Spec', 'In Development', 'Code Review', 'QA Testing', 'Production Release']),
+        sourceTemplate: 'Web Application Delivery Pipeline',
       },
       {
         name: 'Paid Media Campaign Pipeline',
-        stages: ['Audience Research', 'Creative Production', 'Ad Setup', 'A/B Testing', 'Scaling Phase', 'Bi-Weekly Reporting'],
+        stages: makeStages(['Audience Research', 'Creative Production', 'Ad Setup', 'A/B Testing', 'Scaling Phase', 'Bi-Weekly Reporting']),
+        sourceTemplate: 'Paid Advertising Performance Engine',
       },
       {
         name: 'Full-Service Retainer Framework',
-        stages: ['Client Discovery', 'Quarterly Roadmap', 'Sprint Execution', 'Deliverable Review', 'Monthly Business Review'],
+        stages: makeStages(['Client Discovery', 'Quarterly Roadmap', 'Sprint Execution', 'Deliverable Review', 'Monthly Business Review']),
+        sourceTemplate: 'Full-Service Growth Retainer Framework',
       },
     ],
+    taskChecklists: [],
     projectTemplates: [
       {
         name: 'Web Application Architecture',
@@ -160,10 +182,5 @@ export const FALLBACK_PREVIEW: WorkspacePreviewData = {
         details: ['Audience Research', 'Creative Production', 'Ad Setup', 'A/B Testing', 'Scaling Phase'],
       },
     ],
-  },
-  summary: {
-    totalPipelines: 3,
-    totalProjects: 2,
-    totalMarketingWorkflows: 1,
   },
 };

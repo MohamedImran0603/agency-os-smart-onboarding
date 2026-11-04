@@ -23,6 +23,7 @@ export default function TemplatesPage() {
         const data = await getTemplates();
         setTemplates(data && data.length > 0 ? data : FALLBACK_TEMPLATES);
       } catch {
+        setError(null);
         setTemplates(FALLBACK_TEMPLATES);
       } finally {
         setLoading(false);

@@ -21,6 +21,20 @@ import {
   saveTemplateSelections,
 } from '../../lib/api/onboarding';
 
+const DEFAULT_DEMO_STATE: AgencyOnboardingState = {
+  id: 'demo-onboarding-session',
+  agencyId: 'a0000000-0000-0000-0000-000000000001',
+  agencyName: '',
+  agencyType: 'SOFTWARE_DEVELOPMENT',
+  status: 'IN_PROGRESS',
+  currentStep: 1,
+  activatedAt: null,
+  createdAt: '2026-11-04T00:00:00.000Z',
+  updatedAt: '2026-11-04T00:00:00.000Z',
+  serviceSelections: [],
+  templateSelections: [],
+};
+
 export default function SmartOnboardingPage() {
   const [state, setState] = useState<AgencyOnboardingState | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -58,16 +72,7 @@ export default function SmartOnboardingPage() {
       }
     } catch {
       // Gracefully fall back to initial onboarding state so UI is always interactive
-      setState({
-        id: 'demo-onboarding-session',
-        agencyId: 'a0000000-0000-0000-0000-000000000001',
-        agencyName: '',
-        agencyType: 'SOFTWARE_DEVELOPMENT',
-        status: 'IN_PROGRESS',
-        currentStep: 1,
-        serviceSelections: [],
-        templateSelections: [],
-      });
+      setState(DEFAULT_DEMO_STATE);
       setCurrentStep(1);
     } finally {
       setLoading(false);
@@ -89,18 +94,15 @@ export default function SmartOnboardingPage() {
       const updated = await saveProfile(data);
       setState(updated);
     } catch {
-      setState((prev) => ({
-        ...(prev || {
-          id: 'demo-onboarding-session',
-          agencyId: 'a0000000-0000-0000-0000-000000000001',
-          status: 'IN_PROGRESS',
-          serviceSelections: [],
-          templateSelections: [],
-        }),
-        agencyName: data.agencyName,
-        agencyType: data.agencyType,
-        currentStep: 3,
-      }));
+      setState((prev) => {
+        const base = prev || DEFAULT_DEMO_STATE;
+        return {
+          ...base,
+          agencyName: data.agencyName,
+          agencyType: data.agencyType,
+          currentStep: 3,
+        };
+      });
     }
     setCurrentStep(3);
   };
@@ -111,17 +113,20 @@ export default function SmartOnboardingPage() {
       const updated = await saveServices({ services });
       setState(updated);
     } catch {
-      setState((prev) => ({
-        ...prev!,
-        serviceSelections: services.map((s, idx) => ({
-          id: `demo-s-${idx}`,
-          agencyId: prev?.agencyId || '',
-          onboardingId: prev?.id || '',
-          serviceName: s,
-          createdAt: new Date().toISOString(),
-        })),
-        currentStep: 4,
-      }));
+      setState((prev) => {
+        const base = prev || DEFAULT_DEMO_STATE;
+        return {
+          ...base,
+          serviceSelections: services.map((s, idx) => ({
+            id: `demo-s-${idx}`,
+            agencyId: base.agencyId,
+            onboardingId: base.id,
+            serviceName: s,
+            createdAt: new Date().toISOString(),
+          })),
+          currentStep: 4,
+        };
+      });
     }
     setCurrentStep(4);
   };
@@ -132,10 +137,13 @@ export default function SmartOnboardingPage() {
       const updated = await saveTemplateSelections({ templateIds });
       setState(updated);
     } catch {
-      setState((prev) => ({
-        ...prev!,
-        currentStep: 5,
-      }));
+      setState((prev) => {
+        const base = prev || DEFAULT_DEMO_STATE;
+        return {
+          ...base,
+          currentStep: 5,
+        };
+      });
     }
     setCurrentStep(5);
   };

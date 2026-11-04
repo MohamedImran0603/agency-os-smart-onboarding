@@ -30,7 +30,10 @@ export const WorkspacePreviewStep: React.FC<WorkspacePreviewStepProps> = ({
         const res = await generatePreview();
         if (mounted) setData(res || FALLBACK_PREVIEW);
       } catch {
-        if (mounted) setData(FALLBACK_PREVIEW);
+        if (mounted) {
+          setError(null);
+          setData(FALLBACK_PREVIEW);
+        }
       } finally {
         if (mounted) setLoading(false);
       }
