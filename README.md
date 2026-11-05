@@ -58,7 +58,7 @@ When a new agency signs up for **Agency OS**, rather than facing an empty dashbo
 
 ## Architecture & Multi-Tenancy
 
-```
+```text
 ┌────────────────────────────────────────────────────────┐
 │                   Next.js 14 Frontend                  │
 │       (App Router, Tailwind CSS, Lucide Icons)        │
@@ -200,6 +200,7 @@ npm run start:dev
 ```
 
 The NestJS backend will start on **`http://localhost:5000/api`**.
+
 * **Interactive Swagger UI**: [http://localhost:5000/api/docs](http://localhost:5000/api/docs)
 
 ### 2. Start the Frontend
