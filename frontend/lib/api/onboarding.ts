@@ -99,6 +99,13 @@ export async function activateOnboarding(): Promise<ActivationResponse> {
   });
 }
 
+export async function resetOnboarding(): Promise<AgencyOnboardingState> {
+  return request<AgencyOnboardingState>('/onboarding/reset', {
+    method: 'POST',
+    body: JSON.stringify({}),
+  });
+}
+
 export async function getTemplates(): Promise<WorkspaceTemplate[]> {
   return request<WorkspaceTemplate[]>('/templates');
 }

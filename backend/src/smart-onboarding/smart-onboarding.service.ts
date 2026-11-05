@@ -517,6 +517,40 @@ export class SmartOnboardingService {
   }
 
   /**
+   * 7b. Reset Onboarding Session
+   * Cleans up selections and generated configs, returning status to IN_PROGRESS and currentStep to 1.
+   */
+  async resetOnboarding(agencyId: string) {
+    const onboarding = await this.prisma.agencyOnboarding.findUnique({
+      where: { agencyId },
+    });
+
+    if (onboarding) {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.generatedWorkspaceConfig.deleteMany({
+          where: { agencyId, onboardingId: onboarding.id },
+        });
+        await tx.agencyTemplateSelection.deleteMany({
+          where: { agencyId, onboardingId: onboarding.id },
+        });
+        await tx.agencyServiceSelection.deleteMany({
+          where: { agencyId, onboardingId: onboarding.id },
+        });
+        await tx.agencyOnboarding.update({
+          where: { agencyId },
+          data: {
+            status: 'IN_PROGRESS' as any,
+            currentStep: 1,
+            activatedAt: null,
+          },
+        });
+      });
+    }
+
+    return this.getOnboardingState(agencyId);
+  }
+
+  /**
    * 8. List All Agency Profiles & Demos
    * Returns all agencies with their onboarding progression and generated configs.
    */

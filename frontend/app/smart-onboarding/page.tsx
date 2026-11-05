@@ -19,6 +19,7 @@ import {
   saveProfile,
   saveServices,
   saveTemplateSelections,
+  resetOnboarding,
 } from '../../lib/api/onboarding';
 
 const DEFAULT_DEMO_STATE: AgencyOnboardingState = {
@@ -181,7 +182,32 @@ export default function SmartOnboardingPage() {
     setActivationData(res);
     setCurrentStep(7);
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('agency-changed', { detail: { agencyId: state?.agencyId } }));
+      window.dispatchEvent(new CustomEvent('agency-profile-updated', { detail: { agencyId: state?.agencyId } }));
+    }
+  };
+
+  // Reset Demo Session (Resets backend state in Neon DB and returns to Step 1)
+  const handleResetDemo = async () => {
+    try {
+      setLoading(true);
+      const fresh = await resetOnboarding();
+      setState(fresh);
+      setActivationData(null);
+      setCurrentStep(1);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('agency-profile-updated', {
+            detail: { agencyId: fresh.agencyId },
+          }),
+        );
+      }
+    } catch (err) {
+      console.warn('Failed to reset on backend, resetting locally:', err);
+      setState(DEFAULT_DEMO_STATE);
+      setActivationData(null);
+      setCurrentStep(1);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -282,7 +308,7 @@ export default function SmartOnboardingPage() {
         {currentStep === 7 && (
           <CompletionStep
             activationData={activationData}
-            onResetDemo={() => setCurrentStep(1)}
+            onResetDemo={handleResetDemo}
           />
         )}
       </div>

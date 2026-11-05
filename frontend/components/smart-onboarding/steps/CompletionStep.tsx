@@ -1,7 +1,6 @@
-import React from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '../../ui/Card';
-import { Button } from '../../ui/Button';
 import { Badge } from '../../ui/Badge';
 import { ActivationResponse } from '../../../lib/types/onboarding';
 import {
@@ -13,11 +12,12 @@ import {
   Library,
   RefreshCw,
   Zap,
+  ArrowRight,
 } from 'lucide-react';
 
 export interface CompletionStepProps {
   activationData: ActivationResponse | null;
-  onResetDemo?: () => void;
+  onResetDemo?: () => Promise<void> | void;
 }
 
 const CONFIG_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -31,7 +31,19 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
   activationData,
   onResetDemo,
 }) => {
+  const router = useRouter();
+  const [resetting, setResetting] = useState(false);
   const configs = activationData?.configs || [];
+
+  const handleReset = async () => {
+    if (!onResetDemo || resetting) return;
+    try {
+      setResetting(true);
+      await onResetDemo();
+    } finally {
+      setResetting(false);
+    }
+  };
 
   return (
     <Card className="max-w-2xl mx-auto text-center p-8 md:p-12 space-y-7 glass-panel border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-3xl">
@@ -101,22 +113,35 @@ export const CompletionStep: React.FC<CompletionStepProps> = ({
 
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-        <Link href="/templates" className="w-full sm:w-auto">
-          <Button variant="secondary" className="w-full">
-            <Library className="w-4 h-4 mr-1.5" />
-            <span>Browse Template Library</span>
-          </Button>
-        </Link>
+        <button
+          type="button"
+          onClick={() => router.push('/templates')}
+          className="w-full sm:w-auto inline-flex items-center justify-center font-medium transition-all duration-200 px-5 py-2.5 text-sm gap-2 rounded-xl backdrop-blur-md bg-white/80 border border-slate-200/80 text-textPrimary hover:bg-white hover:border-slate-300 shadow-sm active:scale-[0.98]"
+        >
+          <Library className="w-4 h-4 text-primary" />
+          <span>Browse Template Library</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => router.push('/agency-profiles')}
+          className="w-full sm:w-auto inline-flex items-center justify-center font-semibold transition-all duration-200 px-5 py-2.5 text-sm gap-2 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/25 active:scale-[0.98]"
+        >
+          <Building2 className="w-4 h-4" />
+          <span>Agency Profiles</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
 
         {onResetDemo && (
-          <Button
-            variant="glass"
-            onClick={onResetDemo}
-            className="w-full sm:w-auto"
+          <button
+            type="button"
+            disabled={resetting}
+            onClick={handleReset}
+            className="w-full sm:w-auto inline-flex items-center justify-center font-medium transition-all duration-200 px-5 py-2.5 text-sm gap-2 rounded-xl backdrop-blur-md bg-white/60 border border-white/80 text-primary hover:bg-white/90 hover:border-primary/30 shadow-sm disabled:opacity-50 active:scale-[0.98]"
           >
-            <RefreshCw className="w-4 h-4 mr-1.5" />
-            <span>Reset Demo Session</span>
-          </Button>
+            <RefreshCw className={`w-4 h-4 ${resetting ? 'animate-spin' : ''}`} />
+            <span>{resetting ? 'Resetting...' : 'Reset Demo Session'}</span>
+          </button>
         )}
       </div>
     </Card>
