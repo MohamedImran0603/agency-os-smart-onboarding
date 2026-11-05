@@ -21,6 +21,8 @@ import {
   saveServices,
   saveTemplateSelections,
   resetOnboarding,
+  createAgencyDemo,
+  setActiveAgencyId,
 } from '../../lib/api/onboarding';
 
 const DEFAULT_DEMO_STATE: AgencyOnboardingState = {
@@ -97,16 +99,19 @@ function SmartOnboardingContent() {
         if (!stepParam) {
           goToStep(1);
         }
-      } else if (!stepParam) {
-        // If in progress and no step param in URL, resume at appropriate step
-        if (res.templateSelections && res.templateSelections.length > 0) {
-          goToStep(5);
-        } else if (res.serviceSelections && res.serviceSelections.length > 0) {
-          goToStep(4);
-        } else if (res.agencyName && res.agencyName !== 'New Agency' && res.agencyName.trim() !== '') {
-          goToStep(3);
-        } else {
-          goToStep(res.currentStep === 2 ? 2 : 1);
+      } else {
+        setActivationData(null);
+        if (!stepParam) {
+          // If in progress and no step param in URL, resume at appropriate step
+          if (res.templateSelections && res.templateSelections.length > 0) {
+            goToStep(5);
+          } else if (res.serviceSelections && res.serviceSelections.length > 0) {
+            goToStep(4);
+          } else if (res.currentStep >= 2) {
+            goToStep(res.currentStep);
+          } else {
+            goToStep(1);
+          }
         }
       }
     } catch {
@@ -139,6 +144,29 @@ function SmartOnboardingContent() {
   // Step 1: Start
   const handleStart = () => {
     goToStep(2);
+  };
+
+  // Step 1: Create New Agency Workspace
+  const handleCreateNewAgency = async (name: string, type: AgencyType) => {
+    try {
+      setLoading(true);
+      const res = await createAgencyDemo({ name: name.trim(), agencyType: type });
+      setActiveAgencyId(res.id);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('agency-switched', { detail: { agencyId: res.id } }),
+        );
+      }
+      const newState = await getOnboardingState();
+      setState(newState);
+      setActivationData(null);
+      goToStep(2);
+    } catch (err) {
+      console.error('Failed to create new agency workspace:', err);
+      alert('Failed to create agency: ' + (err instanceof Error ? err.message : String(err)));
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Step 2: Save Profile -> Advance to Step 3
@@ -304,6 +332,7 @@ function SmartOnboardingContent() {
             isCompleted={state?.status === 'COMPLETED'}
             agencyName={state?.agencyName}
             onViewComplete={() => goToStep(7)}
+            onCreateNewAgency={handleCreateNewAgency}
           />
         )}
 
