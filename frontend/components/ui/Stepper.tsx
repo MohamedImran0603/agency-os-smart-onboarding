@@ -18,6 +18,7 @@ export interface StepperProps {
   steps: StepItem[];
   currentStep: number;
   className?: string;
+  onStepClick?: (step: number) => void;
 }
 
 const STEP_ICONS = [
@@ -34,6 +35,7 @@ export const Stepper: React.FC<StepperProps> = ({
   steps,
   currentStep,
   className = '',
+  onStepClick,
 }) => {
   const CurrentIcon = STEP_ICONS[currentStep - 1] || Sparkles;
 
@@ -68,14 +70,20 @@ export const Stepper: React.FC<StepperProps> = ({
 
           return (
             <React.Fragment key={step.label}>
-              <div className="flex flex-col items-center relative group">
+              <button
+                type="button"
+                onClick={() => onStepClick?.(stepNumber)}
+                disabled={!onStepClick}
+                className="flex flex-col items-center relative group focus:outline-hidden disabled:cursor-default"
+                title={`Jump to Step ${stepNumber}: ${step.label}`}
+              >
                 <div
                   className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold transition-all duration-300 ${
                     isCompleted
-                      ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 scale-95'
+                      ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20 scale-95 group-hover:scale-105'
                       : isActive
                       ? 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-500/20 scale-105'
-                      : 'bg-white/90 text-textSecondary border border-slate-200 shadow-2xs hover:border-slate-300'
+                      : 'bg-white/90 text-textSecondary border border-slate-200 shadow-2xs hover:border-slate-300 group-hover:scale-105'
                   }`}
                 >
                   {isCompleted ? (
@@ -90,13 +98,13 @@ export const Stepper: React.FC<StepperProps> = ({
                     isActive
                       ? 'text-primary font-bold'
                       : isCompleted
-                      ? 'text-textPrimary font-semibold'
-                      : 'text-textSecondary/70'
+                      ? 'text-textPrimary font-semibold group-hover:text-primary'
+                      : 'text-textSecondary/70 group-hover:text-textPrimary'
                   }`}
                 >
                   {step.label}
                 </span>
-              </div>
+              </button>
 
               {/* Connecting line */}
               {index < steps.length - 1 && (

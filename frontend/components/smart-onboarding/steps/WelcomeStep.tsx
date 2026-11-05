@@ -16,12 +16,18 @@ export interface WelcomeStepProps {
   onStart: () => void;
   isContinuing?: boolean;
   currentStep?: number | undefined;
+  isCompleted?: boolean | undefined;
+  agencyName?: string | undefined;
+  onViewComplete?: (() => void) | undefined;
 }
 
 export const WelcomeStep: React.FC<WelcomeStepProps> = ({
   onStart,
   isContinuing = false,
   currentStep = 1,
+  isCompleted = false,
+  agencyName = '',
+  onViewComplete,
 }) => {
   return (
     <Card className="max-w-3xl mx-auto text-center p-8 md:p-12 space-y-8 glass-panel border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.05)] rounded-3xl">
@@ -38,7 +44,7 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
           </Badge>
           <Badge variant="success" className="gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80">
             <CheckCircle2 className="w-3.5 h-3.5" />
-            <span>7 Guided Steps</span>
+            <span>{isCompleted ? 'Workspace Live' : '7 Guided Steps'}</span>
           </Badge>
         </div>
       </div>
@@ -48,9 +54,21 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
         <h1 className="text-3xl md:text-4xl font-black text-textPrimary tracking-tight">
           Welcome to <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Agency OS</span>
         </h1>
-        <p className="text-sm md:text-base text-textSecondary max-w-xl mx-auto leading-relaxed">
-          Configure your agency workspace in under 3 minutes. We will profile your archetype, recommend battle-tested pipeline boards and deliverable checklists, and provision your isolated tenant workspace automatically.
-        </p>
+        {isCompleted ? (
+          <div className="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 max-w-lg mx-auto text-center space-y-1">
+            <p className="text-sm font-bold text-emerald-800 flex items-center justify-center gap-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Workspace provisioned for {agencyName || 'your agency'}!</span>
+            </p>
+            <p className="text-xs text-emerald-700 leading-relaxed">
+              Your tenant environment is active. You can review your provisioned configs or start a new onboarding flow below.
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm md:text-base text-textSecondary max-w-xl mx-auto leading-relaxed">
+            Configure your agency workspace in under 3 minutes. We will profile your archetype, recommend battle-tested pipeline boards and deliverable checklists, and provision your isolated tenant workspace automatically.
+          </p>
+        )}
       </div>
 
       {/* 3 Step Highlights with Standard Vector Icons & Glass finish */}
@@ -92,16 +110,37 @@ export const WelcomeStep: React.FC<WelcomeStepProps> = ({
         </div>
       </div>
 
-      {/* Action Button */}
-      <div className="pt-2">
-        <Button
-          size="lg"
-          onClick={onStart}
-          className="w-full sm:w-auto px-10 py-3.5 text-base shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35"
-        >
-          <span>{isContinuing && currentStep > 1 ? `Continue Setup (Step ${currentStep})` : 'Get Started Now'}</span>
-          <ArrowRight className="w-4 h-4 ml-1.5" />
-        </Button>
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+        {isCompleted && onViewComplete ? (
+          <>
+            <Button
+              size="lg"
+              onClick={onViewComplete}
+              className="w-full sm:w-auto px-8 py-3.5 text-sm font-bold shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35"
+            >
+              <span>View Completed Workspace (Step 7)</span>
+              <ArrowRight className="w-4 h-4 ml-1.5" />
+            </Button>
+            <Button
+              variant="secondary"
+              size="lg"
+              onClick={onStart}
+              className="w-full sm:w-auto px-8 py-3.5 text-sm font-semibold"
+            >
+              <span>Edit Profile & Services (Step 2)</span>
+            </Button>
+          </>
+        ) : (
+          <Button
+            size="lg"
+            onClick={onStart}
+            className="w-full sm:w-auto px-10 py-3.5 text-base shadow-xl shadow-blue-500/25 hover:shadow-blue-500/35"
+          >
+            <span>{isContinuing && currentStep > 1 ? `Continue Setup (Step ${currentStep})` : 'Start Guided Onboarding'}</span>
+            <ArrowRight className="w-4 h-4 ml-1.5" />
+          </Button>
+        )}
       </div>
     </Card>
   );

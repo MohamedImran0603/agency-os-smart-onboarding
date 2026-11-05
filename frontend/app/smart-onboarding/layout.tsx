@@ -82,7 +82,12 @@ export default function SmartOnboardingLayout({
             <nav className="space-y-1">
               <Link
                 href="/smart-onboarding"
-                onClick={() => setSidebarOpen(false)}
+                onClick={() => {
+                  setSidebarOpen(false);
+                  if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('go-to-welcome'));
+                  }
+                }}
                 className={`flex items-center space-x-3 px-3.5 py-2.5 text-sm font-bold rounded-xl transition-all ${
                   pathname === '/smart-onboarding'
                     ? 'bg-blue-50/90 text-primary border border-blue-200/60 shadow-xs'

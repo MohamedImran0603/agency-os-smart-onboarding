@@ -61,13 +61,14 @@ export default function SmartOnboardingPage() {
       setState(res);
 
       if (res.status === 'COMPLETED') {
-        setCurrentStep(7);
         setActivationData({
           message: 'Workspace active',
           status: 'COMPLETED',
           activatedAt: res.activatedAt || new Date().toISOString(),
           configs: res.generatedConfigs || [],
         });
+        // Default to Welcome Step (Step 1) so clicking Guided Wizard always shows Welcome page
+        setCurrentStep(1);
       } else if (res.templateSelections && res.templateSelections.length > 0) {
         setCurrentStep(5);
       } else if (res.serviceSelections && res.serviceSelections.length > 0) {
@@ -94,8 +95,17 @@ export default function SmartOnboardingPage() {
     const handleTenantSwitched = () => {
       fetchState();
     };
+
+    const handleGoToWelcome = () => {
+      setCurrentStep(1);
+    };
+
     window.addEventListener('agency-switched', handleTenantSwitched);
-    return () => window.removeEventListener('agency-switched', handleTenantSwitched);
+    window.addEventListener('go-to-welcome', handleGoToWelcome);
+    return () => {
+      window.removeEventListener('agency-switched', handleTenantSwitched);
+      window.removeEventListener('go-to-welcome', handleGoToWelcome);
+    };
   }, []);
 
   // Step 1: Start
@@ -250,7 +260,11 @@ export default function SmartOnboardingPage() {
     <div className="space-y-8 animate-fade-in pb-12">
       {/* ── Stepper Header ── */}
       <div className="bg-surface p-4 md:p-6 rounded-2xl border border-border shadow-xs">
-        <Stepper steps={wizardSteps} currentStep={currentStep} />
+        <Stepper
+          steps={wizardSteps}
+          currentStep={currentStep}
+          onStepClick={(step) => setCurrentStep(step)}
+        />
       </div>
 
       {/* ── Dynamic Step View ── */}
@@ -260,6 +274,9 @@ export default function SmartOnboardingPage() {
             onStart={handleStart}
             isContinuing={Boolean(state && state.currentStep > 1 && state.status !== 'COMPLETED')}
             currentStep={state?.currentStep}
+            isCompleted={state?.status === 'COMPLETED'}
+            agencyName={state?.agencyName}
+            onViewComplete={() => setCurrentStep(7)}
           />
         )}
 
