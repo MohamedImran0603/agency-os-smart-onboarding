@@ -28,8 +28,15 @@ export class PrismaService
   }
 
   async onModuleInit(): Promise<void> {
-    await this.$connect();
-    this.logger.log('✅  Prisma connected to database');
+    try {
+      await this.$connect();
+      this.logger.log('✅  Prisma connected to database');
+    } catch (err) {
+      this.logger.warn(
+        '⚠️ Prisma initial connection deferred (Neon serverless compute waking up): ' +
+          (err instanceof Error ? err.message : String(err)),
+      );
+    }
   }
 
   async onModuleDestroy(): Promise<void> {

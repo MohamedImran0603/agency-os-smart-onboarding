@@ -515,4 +515,106 @@ export class SmartOnboardingService {
     });
     return ob ? ob.currentStep : null;
   }
+
+  /**
+   * 8. List All Agency Profiles & Demos
+   * Returns all agencies with their onboarding progression and generated configs.
+   */
+  async listAgencies() {
+    return this.prisma.agency.findMany({
+      include: {
+        onboardings: {
+          include: {
+            serviceSelections: true,
+            templateSelections: {
+              include: { template: true },
+            },
+            generatedConfigs: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  /**
+   * 9. Get Single Agency Profile
+   */
+  async getAgencyById(id: string) {
+    const agency = await this.prisma.agency.findUnique({
+      where: { id },
+      include: {
+        onboardings: {
+          include: {
+            serviceSelections: true,
+            templateSelections: {
+              include: { template: true },
+            },
+            generatedConfigs: true,
+          },
+        },
+      },
+    });
+    if (!agency) {
+      throw new NotFoundException({
+        success: false,
+        message: `Agency with ID '${id}' not found.`,
+      });
+    }
+    return agency;
+  }
+
+  /**
+   * 10. Create New Agency Profile Demo
+   */
+  async createAgency(name: string, agencyType: AgencyType = AgencyType.SOFTWARE_DEVELOPMENT) {
+    const trimmedName = name?.trim();
+    if (!trimmedName || trimmedName.length < 2) {
+      throw new BadRequestException({
+        success: false,
+        message: 'Agency name must be at least 2 characters long.',
+      });
+    }
+
+    const agency = await this.prisma.agency.create({
+      data: {
+        name: trimmedName,
+        onboardings: {
+          create: {
+            agencyName: trimmedName,
+            agencyType: agencyType as any,
+            status: 'IN_PROGRESS' as any,
+            currentStep: 1,
+          },
+        },
+      },
+      include: {
+        onboardings: {
+          include: {
+            serviceSelections: true,
+            templateSelections: {
+              include: { template: true },
+            },
+            generatedConfigs: true,
+          },
+        },
+      },
+    });
+
+    return agency;
+  }
+
+  /**
+   * 11. Delete Agency Profile
+   */
+  async deleteAgency(id: string) {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.generatedWorkspaceConfig.deleteMany({ where: { agencyId: id } });
+      await tx.agencyTemplateSelection.deleteMany({ where: { agencyId: id } });
+      await tx.agencyServiceSelection.deleteMany({ where: { agencyId: id } });
+      await tx.agencyOnboarding.deleteMany({ where: { agencyId: id } });
+      await tx.agency.delete({ where: { id } });
+    });
+    return { success: true, message: `Agency '${id}' deleted successfully.` };
+  }
 }

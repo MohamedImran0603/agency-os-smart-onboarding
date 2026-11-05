@@ -5,18 +5,37 @@ import {
   ActivationResponse,
   ApiResponse,
   AgencyType,
+  AgencyItem,
 } from '../types/onboarding';
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
-const DEMO_AGENCY_ID =
+export const DEFAULT_AGENCY_ID =
   process.env.NEXT_PUBLIC_DEMO_AGENCY_ID || 'a0000000-0000-0000-0000-000000000001';
+
+export function getActiveAgencyId(): string {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('agency_os_active_agency_id');
+    if (saved && saved.trim() !== '') {
+      return saved.trim();
+    }
+  }
+  return DEFAULT_AGENCY_ID;
+}
+
+export function setActiveAgencyId(agencyId: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('agency_os_active_agency_id', agencyId);
+    window.dispatchEvent(new CustomEvent('agency-changed', { detail: { agencyId } }));
+  }
+}
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
+  const agencyId = getActiveAgencyId();
   const headers = {
     'Content-Type': 'application/json',
-    'x-agency-id': DEMO_AGENCY_ID,
+    'x-agency-id': agencyId,
     ...(options.headers || {}),
   };
 
@@ -83,4 +102,25 @@ export async function activateOnboarding(): Promise<ActivationResponse> {
 export async function getTemplates(): Promise<WorkspaceTemplate[]> {
   return request<WorkspaceTemplate[]>('/templates');
 }
+
+export async function getAllAgencies(): Promise<AgencyItem[]> {
+  return request<AgencyItem[]>('/agencies');
+}
+
+export async function createAgencyDemo(data: {
+  name: string;
+  agencyType?: AgencyType;
+}): Promise<AgencyItem> {
+  return request<AgencyItem>('/agencies', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteAgencyDemo(id: string): Promise<{ success: boolean; message: string }> {
+  return request<{ success: boolean; message: string }>(`/agencies/${id}`, {
+    method: 'DELETE',
+  });
+}
+
 

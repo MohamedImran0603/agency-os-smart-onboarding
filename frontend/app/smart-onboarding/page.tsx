@@ -81,6 +81,12 @@ export default function SmartOnboardingPage() {
 
   useEffect(() => {
     fetchState();
+
+    const handleAgencyChanged = () => {
+      fetchState();
+    };
+    window.addEventListener('agency-changed', handleAgencyChanged);
+    return () => window.removeEventListener('agency-changed', handleAgencyChanged);
   }, []);
 
   // Step 1: Start
@@ -93,6 +99,9 @@ export default function SmartOnboardingPage() {
     try {
       const updated = await saveProfile(data);
       setState(updated);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('agency-changed', { detail: { agencyId: updated.agencyId } }));
+      }
     } catch {
       setState((prev) => {
         const base = prev || DEFAULT_DEMO_STATE;
@@ -157,6 +166,9 @@ export default function SmartOnboardingPage() {
   const handleActivated = (res: ActivationResponse) => {
     setActivationData(res);
     setCurrentStep(7);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('agency-changed', { detail: { agencyId: state?.agencyId } }));
+    }
   };
 
   if (loading) {

@@ -111,3 +111,12 @@ export interface ApiResponse<T> {
   details?: Record<string, any>;
 }
 
+export interface AgencyItem {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  onboardings: AgencyOnboardingState[];
+}
+
+

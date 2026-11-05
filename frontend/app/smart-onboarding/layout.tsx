@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Zap,
   BookOpen,
@@ -13,7 +14,9 @@ import {
   ShieldCheck,
   HelpCircle,
   Menu,
+  Building2,
 } from 'lucide-react';
+import { AgencySwitcher } from '../../components/ui/AgencySwitcher';
 
 export default function SmartOnboardingLayout({
   children,
@@ -21,6 +24,7 @@ export default function SmartOnboardingLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="min-h-screen bg-transparent flex flex-col font-sans relative">
@@ -57,26 +61,16 @@ export default function SmartOnboardingLayout({
             <span>Template Catalog</span>
           </Link>
 
-          {/* User Profile Card */}
-          <div className="flex items-center space-x-2.5 pl-3 border-l border-slate-200/80">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 border border-white/60 flex items-center justify-center text-xs font-bold text-white shadow-sm">
-              NT
-            </div>
-            <div className="hidden lg:block text-left">
-              <p className="text-xs font-bold text-textPrimary leading-none flex items-center gap-1">
-                Neirah Tech <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              </p>
-              <p className="text-[10px] text-textSecondary leading-none mt-1">Tenant: Admin Demo</p>
-            </div>
-          </div>
+          {/* Interactive Agency & Demo Tenant Switcher */}
+          <AgencySwitcher />
         </div>
       </header>
 
       {/* ─── Shell Body: Sidebar + Main Content ────────────────────────────── */}
-      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 md:px-8 py-6 gap-8">
-        {/* Sidebar */}
+      <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 md:px-8 py-6 gap-8 items-start">
+        {/* Permanent Sticky Left Sidebar */}
         <aside
-          className={`fixed inset-y-16 left-0 z-30 w-64 glass-panel border-r border-white/80 p-5 space-y-6 transform transition-transform duration-200 ease-in-out md:translate-x-0 md:static md:w-60 md:rounded-2xl md:p-4 md:shadow-xs ${
+          className={`fixed inset-y-16 left-0 z-30 w-64 glass-panel border-r border-white/80 p-5 space-y-6 transform transition-transform duration-200 ease-in-out md:translate-x-0 md:sticky md:top-20 md:self-start md:w-60 md:rounded-2xl md:p-4 md:shadow-xs md:max-h-[calc(100vh-6rem)] md:overflow-y-auto ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
@@ -89,16 +83,42 @@ export default function SmartOnboardingLayout({
               <Link
                 href="/smart-onboarding"
                 onClick={() => setSidebarOpen(false)}
-                className="flex items-center space-x-3 px-3.5 py-2.5 text-sm font-bold rounded-xl bg-blue-50/90 text-primary border border-blue-200/60 shadow-xs"
+                className={`flex items-center space-x-3 px-3.5 py-2.5 text-sm font-bold rounded-xl transition-all ${
+                  pathname === '/smart-onboarding'
+                    ? 'bg-blue-50/90 text-primary border border-blue-200/60 shadow-xs'
+                    : 'text-textSecondary hover:bg-white/80 hover:text-textPrimary'
+                }`}
               >
                 <Workflow className="w-4 h-4 text-primary" />
                 <span>Guided Wizard</span>
               </Link>
 
               <Link
+                href="/agency-profiles"
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center justify-between px-3.5 py-2.5 text-sm font-semibold rounded-xl transition-all ${
+                  pathname === '/agency-profiles'
+                    ? 'bg-blue-50/90 text-primary border border-blue-200/60 shadow-xs'
+                    : 'text-textSecondary hover:bg-white/80 hover:text-textPrimary'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <Building2 className="w-4 h-4 text-indigo-500" />
+                  <span>Agency Profiles</span>
+                </div>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200/60">
+                  Demos
+                </span>
+              </Link>
+
+              <Link
                 href="/templates"
                 onClick={() => setSidebarOpen(false)}
-                className="flex items-center space-x-3 px-3.5 py-2.5 text-sm font-medium rounded-xl text-textSecondary hover:bg-white/80 hover:text-textPrimary transition-all"
+                className={`flex items-center space-x-3 px-3.5 py-2.5 text-sm font-medium rounded-xl transition-all ${
+                  pathname === '/templates'
+                    ? 'bg-blue-50/90 text-primary border border-blue-200/60 shadow-xs'
+                    : 'text-textSecondary hover:bg-white/80 hover:text-textPrimary'
+                }`}
               >
                 <Boxes className="w-4 h-4" />
                 <span>Template Library</span>
