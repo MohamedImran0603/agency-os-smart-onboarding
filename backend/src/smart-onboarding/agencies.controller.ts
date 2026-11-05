@@ -8,12 +8,31 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsString, IsNotEmpty, MinLength, IsOptional, IsEnum } from 'class-validator';
 import { SmartOnboardingService } from './smart-onboarding.service';
 import { AgencyType } from './dto';
 
 export class CreateAgencyDto {
+  @ApiProperty({
+    description: 'Name of the agency workspace',
+    example: 'Acme Digitals',
+    minLength: 2,
+  })
+  @IsString({ message: 'name must be a string' })
+  @IsNotEmpty({ message: 'name cannot be empty' })
+  @MinLength(2, { message: 'name must be at least 2 characters long' })
   name: string;
+
+  @ApiPropertyOptional({
+    enum: AgencyType,
+    description: 'Operating archetype of the agency',
+    example: AgencyType.SOFTWARE_DEVELOPMENT,
+  })
+  @IsOptional()
+  @IsEnum(AgencyType, {
+    message: 'agencyType must be one of: SOFTWARE_DEVELOPMENT, DIGITAL_MARKETING, HYBRID',
+  })
   agencyType?: AgencyType;
 }
 
