@@ -51,8 +51,16 @@ export function AgencySwitcher() {
       loadAgencies();
     };
 
+    const handleProfileUpdated = () => {
+      loadAgencies();
+    };
+
     window.addEventListener('agency-changed', handleAgencyChanged);
-    return () => window.removeEventListener('agency-changed', handleAgencyChanged);
+    window.addEventListener('agency-profile-updated', handleProfileUpdated);
+    return () => {
+      window.removeEventListener('agency-changed', handleAgencyChanged);
+      window.removeEventListener('agency-profile-updated', handleProfileUpdated);
+    };
   }, []);
 
   // Close dropdown on click outside
@@ -75,8 +83,9 @@ export function AgencySwitcher() {
     setActiveAgencyId(id);
     setActiveId(id);
     setIsOpen(false);
-    // Reload page or let reactive components refresh
-    window.location.reload();
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('agency-switched', { detail: { agencyId: id } }));
+    }
   };
 
   const handleCreateAgency = async (e: React.FormEvent) => {
@@ -214,7 +223,7 @@ export function AgencySwitcher() {
               className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold shadow-xs hover:shadow-md hover:from-blue-700 hover:to-indigo-700 transition-all"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>+ Create New Agency Profile</span>
+              <span>Create New Agency Profile</span>
             </button>
           </div>
         </div>

@@ -67,8 +67,16 @@ export default function SmartOnboardingPage() {
           activatedAt: res.activatedAt || new Date().toISOString(),
           configs: res.generatedConfigs || [],
         });
-      } else if (res.currentStep && res.currentStep >= 1 && res.currentStep <= 7) {
-        setCurrentStep(res.currentStep);
+      } else if (res.templateSelections && res.templateSelections.length > 0) {
+        setCurrentStep(5);
+      } else if (res.serviceSelections && res.serviceSelections.length > 0) {
+        setCurrentStep(4);
+      } else if (res.agencyName && res.agencyName !== 'New Agency' && res.agencyName.trim() !== '') {
+        setCurrentStep(3);
+      } else if (res.currentStep === 2) {
+        setCurrentStep(2);
+      } else {
+        setCurrentStep(1);
       }
     } catch {
       // Gracefully fall back to initial onboarding state so UI is always interactive
@@ -82,11 +90,11 @@ export default function SmartOnboardingPage() {
   useEffect(() => {
     fetchState();
 
-    const handleAgencyChanged = () => {
+    const handleTenantSwitched = () => {
       fetchState();
     };
-    window.addEventListener('agency-changed', handleAgencyChanged);
-    return () => window.removeEventListener('agency-changed', handleAgencyChanged);
+    window.addEventListener('agency-switched', handleTenantSwitched);
+    return () => window.removeEventListener('agency-switched', handleTenantSwitched);
   }, []);
 
   // Step 1: Start
@@ -94,15 +102,20 @@ export default function SmartOnboardingPage() {
     setCurrentStep(2);
   };
 
-  // Step 2: Save Profile
+  // Step 2: Save Profile -> Advance to Step 3
   const handleSaveProfile = async (data: { agencyName: string; agencyType: AgencyType }) => {
     try {
       const updated = await saveProfile(data);
       setState(updated);
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('agency-changed', { detail: { agencyId: updated.agencyId } }));
+        window.dispatchEvent(
+          new CustomEvent('agency-profile-updated', {
+            detail: { agencyId: updated.agencyId, agencyName: data.agencyName },
+          }),
+        );
       }
-    } catch {
+    } catch (err) {
+      console.warn('Failed to save profile to backend, continuing locally:', err);
       setState((prev) => {
         const base = prev || DEFAULT_DEMO_STATE;
         return {
@@ -113,6 +126,7 @@ export default function SmartOnboardingPage() {
         };
       });
     }
+    // Directly advance to Step 3 (Services) without reloading or showing loading spinner
     setCurrentStep(3);
   };
 

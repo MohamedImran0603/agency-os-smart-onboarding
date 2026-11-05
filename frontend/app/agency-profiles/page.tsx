@@ -119,7 +119,7 @@ export default function AgencyProfilesPage() {
             className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-xs hover:shadow-md transition-all"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Create New Agency Profile</span>
+            <span>Create New Agency Profile</span>
           </button>
         </div>
       </div>
@@ -167,7 +167,7 @@ export default function AgencyProfilesPage() {
             onClick={() => setShowCreateModal(true)}
             className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl shadow-xs"
           >
-            + Create Agency Profile
+            Create Agency Profile
           </button>
         </div>
       ) : (
@@ -183,21 +183,19 @@ export default function AgencyProfilesPage() {
             return (
               <div
                 key={agency.id}
-                className={`relative bg-surface rounded-2xl p-6 border transition-all ${
-                  isCurrent
-                    ? 'border-primary ring-2 ring-primary/20 shadow-md'
-                    : 'border-border hover:border-slate-300 hover:shadow-sm'
-                }`}
+                className={`relative bg-surface rounded-2xl p-6 border transition-all ${isCurrent
+                  ? 'border-primary ring-2 ring-primary/20 shadow-md'
+                  : 'border-border hover:border-slate-300 hover:shadow-sm'
+                  }`}
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center space-x-3 min-w-0">
                     <div
-                      className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-extrabold text-white shadow-sm shrink-0 ${
-                        isCompleted
-                          ? 'bg-gradient-to-tr from-emerald-500 to-teal-600'
-                          : 'bg-gradient-to-tr from-indigo-500 to-purple-600'
-                      }`}
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-extrabold text-white shadow-sm shrink-0 ${isCompleted
+                        ? 'bg-gradient-to-tr from-emerald-500 to-teal-600'
+                        : 'bg-gradient-to-tr from-indigo-500 to-purple-600'
+                        }`}
                     >
                       {(ob?.agencyName || agency.name).slice(0, 2).toUpperCase()}
                     </div>
@@ -261,11 +259,10 @@ export default function AgencyProfilesPage() {
 
                   <button
                     onClick={() => handleSelect(agency.id)}
-                    className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-                      isCurrent
-                        ? 'bg-primary text-white shadow-xs hover:bg-primaryDark'
-                        : 'bg-white text-textPrimary border border-slate-200 hover:border-primary hover:text-primary shadow-2xs'
-                    }`}
+                    className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl transition-all ${isCurrent
+                      ? 'bg-primary text-white shadow-xs hover:bg-primaryDark'
+                      : 'bg-white text-textPrimary border border-slate-200 hover:border-primary hover:text-primary shadow-2xs'
+                      }`}
                   >
                     <span>{isCurrent ? 'Continue Onboarding' : 'Switch to this Agency'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
