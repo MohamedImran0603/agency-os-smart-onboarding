@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ChevronDown,
   Check,
@@ -18,6 +19,7 @@ import {
 import { AgencyItem, AgencyType } from '../../lib/types/onboarding';
 
 export function AgencySwitcher() {
+  const router = useRouter();
   const [agencies, setAgencies] = useState<AgencyItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
@@ -86,6 +88,7 @@ export function AgencySwitcher() {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('agency-switched', { detail: { agencyId: id } }));
     }
+    router.push('/smart-onboarding?step=1');
   };
 
   const handleCreateAgency = async (e: React.FormEvent) => {
@@ -102,7 +105,11 @@ export function AgencySwitcher() {
       setNewAgencyName('');
       setActiveAgencyId(created.id);
       setActiveId(created.id);
-      window.location.reload();
+      loadAgencies();
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('agency-switched', { detail: { agencyId: created.id } }));
+      }
+      router.push('/smart-onboarding?step=1');
     } catch (err) {
       alert('Failed to create agency: ' + (err instanceof Error ? err.message : String(err)));
     } finally {

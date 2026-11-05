@@ -81,7 +81,7 @@ export default function SmartOnboardingLayout({
             </p>
             <nav className="space-y-1">
               <Link
-                href="/smart-onboarding"
+                href="/smart-onboarding?step=1"
                 onClick={() => {
                   setSidebarOpen(false);
                   if (typeof window !== 'undefined') {

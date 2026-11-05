@@ -50,10 +50,13 @@ export default function AgencyProfilesPage() {
     loadData();
   }, []);
 
-  const handleSelect = (id: string) => {
+  const handleSelect = (id: string, step: number = 1) => {
     setActiveAgencyId(id);
     setActiveId(id);
-    router.push('/smart-onboarding');
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('agency-switched', { detail: { agencyId: id } }));
+    }
+    router.push(`/smart-onboarding?step=${step}`);
   };
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -141,7 +144,7 @@ export default function AgencyProfilesPage() {
             </div>
           </div>
           <Link
-            href="/smart-onboarding"
+            href="/smart-onboarding?step=1"
             className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-primary hover:text-primaryDark bg-white/90 rounded-xl border border-blue-200 shadow-2xs hover:shadow-xs transition-all"
           >
             <span>Open Wizard</span>
@@ -258,13 +261,13 @@ export default function AgencyProfilesPage() {
                   </button>
 
                   <button
-                    onClick={() => handleSelect(agency.id)}
+                    onClick={() => handleSelect(agency.id, isCompleted ? 7 : (ob?.currentStep || 1))}
                     className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl transition-all ${isCurrent
                       ? 'bg-primary text-white shadow-xs hover:bg-primaryDark'
                       : 'bg-white text-textPrimary border border-slate-200 hover:border-primary hover:text-primary shadow-2xs'
                       }`}
                   >
-                    <span>{isCurrent ? 'Continue Onboarding' : 'Switch to this Agency'}</span>
+                    <span>{isCompleted ? 'View Live Workspace' : isCurrent ? 'Continue Onboarding' : 'Switch to this Agency'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>

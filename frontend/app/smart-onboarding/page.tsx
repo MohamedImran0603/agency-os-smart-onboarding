@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Stepper } from '../../components/ui/Stepper';
 import { WelcomeStep } from '../../components/smart-onboarding/steps/WelcomeStep';
 import { AgencyProfileStep } from '../../components/smart-onboarding/steps/AgencyProfileStep';
@@ -36,22 +37,47 @@ const DEFAULT_DEMO_STATE: AgencyOnboardingState = {
   templateSelections: [],
 };
 
-export default function SmartOnboardingPage() {
+const wizardSteps = [
+  { label: 'Welcome' },
+  { label: 'Profile' },
+  { label: 'Services' },
+  { label: 'Templates' },
+  { label: 'Preview' },
+  { label: 'Review' },
+  { label: 'Complete' },
+];
+
+function SmartOnboardingContent() {
+  const searchParams = useSearchParams();
+  const stepParam = searchParams.get('step');
+  const initialStepFromUrl = stepParam ? parseInt(stepParam, 10) : null;
+
   const [state, setState] = useState<AgencyOnboardingState | null>(null);
-  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [currentStep, setCurrentStep] = useState<number>(
+    initialStepFromUrl && initialStepFromUrl >= 1 && initialStepFromUrl <= 7
+      ? initialStepFromUrl
+      : 1
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [activationData, setActivationData] = useState<ActivationResponse | null>(null);
 
-  const wizardSteps = [
-    { label: 'Welcome' },
-    { label: 'Profile' },
-    { label: 'Services' },
-    { label: 'Templates' },
-    { label: 'Preview' },
-    { label: 'Review' },
-    { label: 'Complete' },
-  ];
+  const goToStep = (stepNumber: number) => {
+    setCurrentStep(stepNumber);
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', `?step=${stepNumber}`);
+    }
+  };
+
+  // Sync state if step URL param changes
+  useEffect(() => {
+    if (stepParam) {
+      const parsed = parseInt(stepParam, 10);
+      if (parsed >= 1 && parsed <= 7) {
+        setCurrentStep(parsed);
+      }
+    }
+  }, [stepParam]);
 
   const fetchState = async () => {
     try {
@@ -67,23 +93,25 @@ export default function SmartOnboardingPage() {
           activatedAt: res.activatedAt || new Date().toISOString(),
           configs: res.generatedConfigs || [],
         });
-        // Default to Welcome Step (Step 1) so clicking Guided Wizard always shows Welcome page
-        setCurrentStep(1);
-      } else if (res.templateSelections && res.templateSelections.length > 0) {
-        setCurrentStep(5);
-      } else if (res.serviceSelections && res.serviceSelections.length > 0) {
-        setCurrentStep(4);
-      } else if (res.agencyName && res.agencyName !== 'New Agency' && res.agencyName.trim() !== '') {
-        setCurrentStep(3);
-      } else if (res.currentStep === 2) {
-        setCurrentStep(2);
-      } else {
-        setCurrentStep(1);
+        // If no explicit step requested in URL, default to Welcome (Step 1) so user can see options
+        if (!stepParam) {
+          goToStep(1);
+        }
+      } else if (!stepParam) {
+        // If in progress and no step param in URL, resume at appropriate step
+        if (res.templateSelections && res.templateSelections.length > 0) {
+          goToStep(5);
+        } else if (res.serviceSelections && res.serviceSelections.length > 0) {
+          goToStep(4);
+        } else if (res.agencyName && res.agencyName !== 'New Agency' && res.agencyName.trim() !== '') {
+          goToStep(3);
+        } else {
+          goToStep(res.currentStep === 2 ? 2 : 1);
+        }
       }
     } catch {
-      // Gracefully fall back to initial onboarding state so UI is always interactive
       setState(DEFAULT_DEMO_STATE);
-      setCurrentStep(1);
+      if (!stepParam) goToStep(1);
     } finally {
       setLoading(false);
     }
@@ -97,7 +125,7 @@ export default function SmartOnboardingPage() {
     };
 
     const handleGoToWelcome = () => {
-      setCurrentStep(1);
+      goToStep(1);
     };
 
     window.addEventListener('agency-switched', handleTenantSwitched);
@@ -110,7 +138,7 @@ export default function SmartOnboardingPage() {
 
   // Step 1: Start
   const handleStart = () => {
-    setCurrentStep(2);
+    goToStep(2);
   };
 
   // Step 2: Save Profile -> Advance to Step 3
@@ -137,11 +165,10 @@ export default function SmartOnboardingPage() {
         };
       });
     }
-    // Directly advance to Step 3 (Services) without reloading or showing loading spinner
-    setCurrentStep(3);
+    goToStep(3);
   };
 
-  // Step 3: Save Services
+  // Step 3: Save Services -> Advance to Step 4
   const handleSaveServices = async (services: string[]) => {
     try {
       const updated = await saveServices({ services });
@@ -162,10 +189,10 @@ export default function SmartOnboardingPage() {
         };
       });
     }
-    setCurrentStep(4);
+    goToStep(4);
   };
 
-  // Step 4: Save Templates
+  // Step 4: Save Templates -> Advance to Step 5
   const handleSaveTemplates = async (templateIds: string[]) => {
     try {
       const updated = await saveTemplateSelections({ templateIds });
@@ -179,31 +206,32 @@ export default function SmartOnboardingPage() {
         };
       });
     }
-    setCurrentStep(5);
+    goToStep(5);
   };
 
-  // Step 5: Advance from Preview
+  // Step 5: Advance from Preview -> Step 6
   const handlePreviewConfirmed = () => {
-    setCurrentStep(6);
+    goToStep(6);
   };
 
-  // Step 6: On Activated
+  // Step 6: On Activated -> Step 7
   const handleActivated = (res: ActivationResponse) => {
     setActivationData(res);
-    setCurrentStep(7);
+    goToStep(7);
     if (typeof window !== 'undefined') {
-      window.dispatchEvent(new CustomEvent('agency-profile-updated', { detail: { agencyId: state?.agencyId } }));
+      window.dispatchEvent(
+        new CustomEvent('agency-profile-updated', { detail: { agencyId: state?.agencyId } })
+      );
     }
   };
 
   // Reset Demo Session (Resets backend state in Neon DB and returns to Step 1)
   const handleResetDemo = async () => {
     try {
-      setLoading(true);
       const fresh = await resetOnboarding();
       setState(fresh);
       setActivationData(null);
-      setCurrentStep(1);
+      goToStep(1);
       if (typeof window !== 'undefined') {
         window.dispatchEvent(
           new CustomEvent('agency-profile-updated', {
@@ -215,13 +243,12 @@ export default function SmartOnboardingPage() {
       console.warn('Failed to reset on backend, resetting locally:', err);
       setState(DEFAULT_DEMO_STATE);
       setActivationData(null);
-      setCurrentStep(1);
-    } finally {
-      setLoading(false);
+      goToStep(1);
     }
   };
 
-  if (loading) {
+  // Only show full loading spinner on initial mount before state exists
+  if (loading && !state) {
     return (
       <div className="py-24 text-center flex flex-col items-center justify-center space-y-4">
         <svg className="animate-spin h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24" width="40" height="40">
@@ -258,12 +285,12 @@ export default function SmartOnboardingPage() {
 
   return (
     <div className="space-y-8 animate-fade-in pb-12">
-      {/* ── Stepper Header ── */}
+      {/* ── Stepper Header with Interactive Jumping ── */}
       <div className="bg-surface p-4 md:p-6 rounded-2xl border border-border shadow-xs">
         <Stepper
           steps={wizardSteps}
           currentStep={currentStep}
-          onStepClick={(step) => setCurrentStep(step)}
+          onStepClick={(step) => goToStep(step)}
         />
       </div>
 
@@ -276,7 +303,7 @@ export default function SmartOnboardingPage() {
             currentStep={state?.currentStep}
             isCompleted={state?.status === 'COMPLETED'}
             agencyName={state?.agencyName}
-            onViewComplete={() => setCurrentStep(7)}
+            onViewComplete={() => goToStep(7)}
           />
         )}
 
@@ -285,7 +312,7 @@ export default function SmartOnboardingPage() {
             initialName={state?.agencyName === 'New Agency' ? '' : (state?.agencyName ?? '')}
             initialType={state?.agencyType ?? 'SOFTWARE_DEVELOPMENT'}
             onNext={handleSaveProfile}
-            onBack={() => setCurrentStep(1)}
+            onBack={() => goToStep(1)}
           />
         )}
 
@@ -294,7 +321,7 @@ export default function SmartOnboardingPage() {
             agencyType={state?.agencyType || 'SOFTWARE_DEVELOPMENT'}
             initialServices={state?.serviceSelections?.map((s) => s.serviceName) || []}
             onNext={handleSaveServices}
-            onBack={() => setCurrentStep(2)}
+            onBack={() => goToStep(2)}
           />
         )}
 
@@ -303,14 +330,14 @@ export default function SmartOnboardingPage() {
             agencyType={state?.agencyType || 'SOFTWARE_DEVELOPMENT'}
             initialSelectedIds={state?.templateSelections?.map((ts) => ts.templateId) || []}
             onNext={handleSaveTemplates}
-            onBack={() => setCurrentStep(3)}
+            onBack={() => goToStep(3)}
           />
         )}
 
         {currentStep === 5 && (
           <WorkspacePreviewStep
             onNext={handlePreviewConfirmed}
-            onBack={() => setCurrentStep(4)}
+            onBack={() => goToStep(4)}
           />
         )}
 
@@ -318,7 +345,7 @@ export default function SmartOnboardingPage() {
           <ReviewAndConfirmStep
             state={state}
             onActivated={handleActivated}
-            onBack={() => setCurrentStep(5)}
+            onBack={() => goToStep(5)}
           />
         )}
 
@@ -330,5 +357,23 @@ export default function SmartOnboardingPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SmartOnboardingPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-24 text-center flex flex-col items-center justify-center space-y-4">
+          <svg className="animate-spin h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24" width="40" height="40">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+          </svg>
+          <p className="text-base font-semibold text-textPrimary">Loading Onboarding Wizard...</p>
+        </div>
+      }
+    >
+      <SmartOnboardingContent />
+    </Suspense>
   );
 }
