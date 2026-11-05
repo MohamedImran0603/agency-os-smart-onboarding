@@ -104,7 +104,7 @@ export default function AgencyProfilesPage() {
             </h1>
           </div>
           <p className="text-sm text-textSecondary mt-1">
-            Browse all seeded demo tenants and newly created agency profiles in your Neon PostgreSQL database.
+            Browse all seeded demo tenants and newly created agency profiles in your PostgreSQL database.
           </p>
         </div>
 

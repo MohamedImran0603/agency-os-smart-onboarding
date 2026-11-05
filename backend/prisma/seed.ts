@@ -349,7 +349,14 @@ async function main() {
     });
   }
   console.log(`✅ Seeded ${templates.length} workspace templates successfully.`);
+  console.log('\n======================================================');
   console.log('🎉 Seeding completed successfully!');
+  console.log('📋 Available Demo Agency IDs:');
+  for (const agency of stubAgencies) {
+    console.log(`   - ${agency.name}: ${agency.id}`);
+  }
+  console.log('👉 Copy one of these IDs into NEXT_PUBLIC_DEMO_AGENCY_ID in frontend/.env.local');
+  console.log('======================================================\n');
 }
 
 main()

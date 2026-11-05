@@ -253,7 +253,8 @@ function SmartOnboardingContent() {
     }
   };
 
-  // Reset Demo Session (Resets backend state in Neon DB and returns to Step 1)
+  // Reset Demo Session — demo utility only (beyond core module scope)
+  // Resets backend onboarding state to Step 1 for the active agency tenant.
   const handleResetDemo = async () => {
     try {
       const fresh = await resetOnboarding();

@@ -33,7 +33,7 @@ export class PrismaService
       this.logger.log('✅  Prisma connected to database');
     } catch (err) {
       this.logger.warn(
-        '⚠️ Prisma initial connection deferred (Neon serverless compute waking up): ' +
+        '⚠️ Prisma initial connection deferred (database serverless compute waking up): ' +
           (err instanceof Error ? err.message : String(err)),
       );
     }

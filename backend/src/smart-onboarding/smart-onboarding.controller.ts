@@ -92,7 +92,7 @@ export class SmartOnboardingController {
 
   @Post('reset')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Reset current agency onboarding session to Step 1' })
+  @ApiOperation({ summary: 'Reset current agency onboarding session to Step 1 (Demo utility only — beyond core module scope)' })
   @ApiResponse({ status: 200, description: 'Onboarding session reset successfully' })
   async resetOnboarding(@AgencyId() agencyId: string) {
     return this.smartOnboardingService.resetOnboarding(agencyId);

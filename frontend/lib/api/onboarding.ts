@@ -10,6 +10,8 @@ import {
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/api';
+// Falls back to the first seeded stub agency ID if the env variable is not set.
+// Set NEXT_PUBLIC_DEMO_AGENCY_ID in frontend/.env.local after running `npx prisma db seed`.
 export const DEFAULT_AGENCY_ID =
   process.env.NEXT_PUBLIC_DEMO_AGENCY_ID || 'a0000000-0000-0000-0000-000000000001';
 
