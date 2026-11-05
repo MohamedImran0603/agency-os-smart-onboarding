@@ -32,8 +32,8 @@ When a new agency signs up for **Agency OS**, rather than facing an empty dashbo
 3. **Step 3: Select Core Services** — Customizes agency deliverables and service offerings.
 4. **Step 4: Deterministic Template Recommendations** — Matches battle-tested pipeline boards and task checklists tailored to the chosen archetype.
 5. **Step 5: Workspace Preview** — Inspects the generated pipeline stages, checklist items, and project structures before provisioning.
-6. **Step 6: Review & Confirmation** — Validates the full configuration payload and terms.
-7. **Step 7: Atomic Workspace Provisioning** — Atomically commits tenant-scoped `GeneratedWorkspaceConfig` records into PostgreSQL with zero downtime.
+6. **Step 6: Review & Confirmation** — Validates the full configuration payload before final activation.
+7. **Step 7: Atomic Workspace Provisioning** — Atomically commits tenant-scoped `GeneratedWorkspaceConfig` records into PostgreSQL with zero partial states.
 
 ---
 
@@ -41,13 +41,13 @@ When a new agency signs up for **Agency OS**, rather than facing an empty dashbo
 
 * **Multi-Tenant Agency Management & Switching**:
   * Real-time tenant switcher in the top navigation bar.
-  * Dedicated `/agency-profiles` route to view, switch, create, and delete agency workspace profiles.
-  * Direct **`+ Create New Agency Workspace`** modal on the Welcome Step to launch new agency setups without modifying existing completed tenants.
+  * Dedicated `/agency-profiles` route to view, switch, and create agency workspace profiles (*Demo helper — beyond core module scope, provided for evaluation convenience*).
+  * Direct **`+ Create New Agency Workspace`** modal on the Welcome Step to test fresh onboarding flows without altering previously completed tenants.
 * **Non-Blocking Client-Side State Synchronization**:
   * Dynamic step URL routing (`?step=1` through `?step=7`).
   * Interactive Stepper allowing free jumping between completed/current steps.
   * Sticky, non-sliding sidebar navigation that remains pinned during long-page scrolling.
-  * Reset Demo Session capability (`POST /api/onboarding/reset`) to restart an onboarding session cleanly.
+  * Reset Demo Session capability (`POST /api/onboarding/reset`) to restart an onboarding session cleanly (*Demo utility — not a production requirement*).
 * **Deterministic Recommendation Engine**:
   * Maps business models to predefined, battle-tested workspace templates.
   * Ensures repeatable, high-quality agency setups with pre-populated pipelines and deliverables.
@@ -77,7 +77,7 @@ When a new agency signs up for **Agency OS**, rather than facing an empty dashbo
                             │
                             ▼
 ┌────────────────────────────────────────────────────────┐
-│              PostgreSQL Database (Neon)                │
+│                  PostgreSQL Database                   │
 │   (Agencies, Onboardings, Templates, WorkspaceConfigs) │
 └────────────────────────────────────────────────────────┘
 ```
@@ -93,8 +93,8 @@ When a new agency signs up for **Agency OS**, rather than facing an empty dashbo
 | :--- | :--- |
 | **Frontend** | Next.js 14 (App Router) · React 18 · TypeScript · Tailwind CSS · Lucide React |
 | **Backend** | NestJS 10 · TypeScript · Prisma ORM · Swagger / OpenAPI · class-validator |
-| **Database** | Neon Cloud Serverless PostgreSQL (`aws-ap-southeast-1`) / Local PostgreSQL |
-| **Multi-Tenancy** | Strict tenant scoping via `x-agency-id` and transactional cascades |
+| **Database** | PostgreSQL · Prisma Migrations |
+| **Multi-Tenancy** | Strict tenant scoping via `x-agency-id` header and transactional cascades |
 | **Testing** | Jest · Supertest · Automated unit & integration test suites |
 
 ---
@@ -105,7 +105,7 @@ Ensure you have the following installed locally:
 
 * **Node.js**: `v18.17.0+` or `v20+`
 * **npm**: `v9+` or `v10+`
-* **PostgreSQL**: Local instance or a cloud database (e.g. Neon PostgreSQL)
+* **PostgreSQL**: Local instance or any standard cloud-hosted PostgreSQL database
 
 ---
 
@@ -117,6 +117,9 @@ Clone the repository and install dependencies in both applications:
 # 1. Install Backend Dependencies
 cd backend
 npm install
+
+# Generate the Prisma client (required before first run)
+npx prisma generate
 
 # 2. Install Frontend Dependencies
 cd ../frontend
@@ -136,10 +139,10 @@ cd backend
 cp .env.example .env
 ```
 
-Configure your `.env` variables:
+Open `.env` and fill in your values:
 
 ```env
-DATABASE_URL="postgresql://<user>:<password>@<neon-host>/<db-name>?sslmode=require"
+DATABASE_URL="postgresql://<user>:<password>@<host>/<db-name>?schema=public"
 PORT=5000
 FRONTEND_URL="http://localhost:3000"
 JWT_SECRET="super-secret-development-jwt-key"
@@ -154,26 +157,34 @@ cd frontend
 cp .env.example .env.local
 ```
 
-Configure your `.env.local` variables:
+Open `.env.local` and fill in your values:
 
 ```env
 NEXT_PUBLIC_API_BASE_URL="http://localhost:5000/api"
-NEXT_PUBLIC_DEMO_AGENCY_ID="a0000000-0000-0000-0000-000000000001"
+
+# After running the seed command in the next step, copy one of the seeded Agency IDs 
+# (e.g. from terminal output or seed list) into this variable.
+NEXT_PUBLIC_DEMO_AGENCY_ID="<paste-your-seeded-agency-id-here>"
 ```
+
+> **Note**: An initial seeded demo ID (e.g., `a0000000-0000-0000-0000-000000000001`) is provisioned by the seed script. You can set this variable to any valid agency ID in your database.
 
 ---
 
 ## Database Setup & Migrations
 
-Deploy database migrations and seed default workspace templates and demo agencies:
+Deploy database migrations and seed default workspace templates and stub agencies:
 
 ```bash
 cd backend
 
-# Deploy migrations to the database
-npx prisma migrate deploy
+# For local development setup (creates migration history and applies schema)
+npx prisma migrate dev
 
-# Seed workspace templates (Software Dev, Digital Marketing, Hybrid) and initial agencies
+# Note: For production / CI environments only, use:
+# npx prisma migrate deploy
+
+# Seed workspace templates (Software Dev, Digital Marketing, Hybrid) and stub agencies
 npx prisma db seed
 ```
 
@@ -210,7 +221,7 @@ The Next.js frontend will start on **`http://localhost:3000`**.
 | :--- | :--- |
 | **`/smart-onboarding`** | 7-step guided smart onboarding wizard with interactive stepper. |
 | **`/smart-onboarding?step=1`** | Welcome screen with workspace status and **`+ Create New Agency Workspace`**. |
-| **`/agency-profiles`** | Manage all agency tenants, switch active workspaces, or create new demo profiles. |
+| **`/agency-profiles`** | *Demo helper*: view, switch, and create agency profiles. (*Beyond core module scope — provided for evaluation convenience*). |
 | **`/templates`** | Interactive catalog of all workspace templates, pipeline stages, and checklists. |
 
 ---
@@ -227,16 +238,17 @@ Tenant Header: `x-agency-id: <uuid>`
 | `GET` | `/onboarding` | Fetch current onboarding progression state for active tenant. |
 | `PUT` | `/onboarding/profile` | Update agency name and operating archetype (Step 2). |
 | `PUT` | `/onboarding/services` | Save core service selections (Step 3). |
-| `PUT` | `/onboarding/templates` | Select workspace templates (Step 4). |
+| `GET` | `/onboarding/templates` | Return eligible recommended templates for active tenant. |
+| `PUT` | `/onboarding/templates` | Save template selections (Step 4). |
 | `POST` | `/onboarding/preview` | Generate preview payload of pipeline boards and checklists (Step 5). |
-| `POST` | `/onboarding/activate` | Atomically provision and activate workspace (Step 6 -> Step 7). |
-| `POST` | `/onboarding/reset` | Reset onboarding session selections back to Step 1. |
+| `POST` | `/onboarding/activate` | Atomically provision and activate workspace (Step 7). |
+| `POST` | `/onboarding/reset` | Reset onboarding session back to Step 1. (*Demo utility only — beyond core module scope*). |
 
-### Agency Management Endpoints
+### Agency Endpoints *(Demo helpers — beyond core module scope, provided for standalone evaluation)*
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
-| `GET` | `/agencies` | List all agency workspaces, their onboarding status, and configs. |
+| `GET` | `/agencies` | List all agency workspaces and their onboarding status. |
 | `POST` | `/agencies` | Create a new isolated agency tenant workspace. |
 | `GET` | `/agencies/:id` | Get details for a specific agency workspace. |
 | `DELETE` | `/agencies/:id` | Delete an agency workspace and cascade its tenant records. |
